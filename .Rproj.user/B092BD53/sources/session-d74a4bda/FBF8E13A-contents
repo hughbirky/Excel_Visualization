@@ -1,0 +1,119 @@
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(tidyverse)
+library(readxl)
+library(ggthemes)
+library(gridExtra)
+library(reshape2)
+
+# Cleaning
+# Clearing the environment of previous variables
+rm(list=ls())
+# Clearing the console of previous items
+shell("cls")
+# Setting the working directory to the location of the current script
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+# Pulling in the function
+source("./ScatterplotFunc.R")
+
+
+# Enter in the exact path to the excel sheet you would like to use
+excel_path <- "C:/Users/hughm/Dropbox/Cochlear_IIR_Project/Analysis/Scoring/Cochlear IIR scoring log.xlsx"
+
+# You can search for the column name you want by starting to type in the name after the $ below
+# df <- read_excel(excel_path)
+# df$Talker_Discrim_Quiet_Score
+
+
+# Write the names in a string for the column variables you want to use for the
+# x axis and y axis. If you want to plot multiple for correlation, just type them 
+# one after the other with commas in between 
+variables_1 <- c("Word_Rec_Quiet_Reaction")
+variables_2 <- c("Word_Rec_Quiet_Reaction")
+
+# If you want to put two scatterplots on top of each other, change the "dual" variable to TRUE. 
+variables_3 <- c("Accent_Discrimination_Score_Total_List_A")
+variables_4 <- c("Accent_Discrimination_Score_Total_List_B")
+# variables_3 <- c("Accent_Discrimination_Rating_Total_List_A")
+# variables_4 <- c("Accent_Discrimination_Rating_Total_List_B")
+
+
+
+# Facet_wrap, stacking the figures, ggarrange, ggpubr
+
+
+ # Running the function
+
+# Reading the excel file
+df <- read_excel(excel_path)
+
+df$Accent_Discrimination_Score_Total_List_A <- df$Accent_Discrimination_Score_Total_List_A * 100
+df$Accent_Discrimination_Score_Total_List_B <- df$Accent_Discrimination_Score_Total_List_B * 100
+df$Word_Rec_Quiet_Score <- df$Word_Rec_Quiet_Score * 100
+df$Word_Rec_Quiet_Reaction <- df$Word_Rec_Quiet_Reaction * 1000
+
+
+df <- na.omit(df[,names(df) %in% c("Cochlear ID",variables_1,variables_2,variables_3,variables_4)])
+
+df_rating <- melt(df[,names(df) %in% c("Cochlear ID",variables_1,variables_2)])
+
+df_rating <- bind_rows(df_rating,df_rating)
+
+df_rating$List_Type[1:29] <- "A"
+
+df_rating$List_Type[30:58] <- "A+T"
+
+# df_rating <- df_rating %>%
+#   mutate(List_Type = ifelse(grepl("List_A", variable), "A",
+#                             ifelse(grepl("List_B", variable), "A+T", NA)))
+
+df_scores <- melt(df[,names(df) %in% c("Cochlear ID",variables_3,variables_4)])
+
+df_scores <- df_scores %>%
+  mutate(List_Type = ifelse(grepl("List_A", variable), "A",
+                            ifelse(grepl("List_B", variable), "A+T", NA)))
+
+df_rating <- df_rating %>% 
+  rename(Rating = value)
+
+df_rating <- df_rating[,!names(df_rating) %in% "variable"]
+df_scores <- df_scores %>% 
+  rename(Score = value)
+# Getting rid of different data points
+df_scores <- df_scores[,!names(df_scores) %in% "variable"]
+
+combined_df <- right_join(df_scores, df_rating)
+
+
+plot <- ggplot(combined_df, aes(x = Score, y = Rating, color = List_Type, fill = List_Type)) +
+  geom_point(size = 5, shape = 21, color = "black", stroke = 1.5) +
+  geom_smooth(method = "lm", se = F) +
+  scale_fill_manual(values = c("A" = "lightgoldenrod2", "A+T" = "darkgrey"), name = "Orthographic Condition") +
+  scale_color_manual(values = c("black"), name = "Orthographic Condition") +
+  scale_color_manual(values = c("A" = "lightgoldenrod2", "A+T" = "darkgrey"), name = "Orthographic Condition") +
+  theme(
+    plot.title = element_text(size=20),
+    axis.title.x = element_text(angle = 0, hjust = 0.5,size = 30),
+    axis.title.y = element_text(angle = 90, vjust = 0.5,size = 30),
+    axis.text.x = element_text(size = 25),  # Increase size of x-axis numbers
+    axis.text.y = element_text(size = 25), # Increase size of y-axis numbers
+    legend.text = element_text(size = 20), # Adjust legend text size
+    legend.title = element_text(angle = 0,size = 15), # Adjust legend text size
+    panel.background = element_rect(fill = "white"), # Set background color
+    panel.border = element_rect(color = "black", fill = NA)
+    # panel.grid.major = element_blank(),  # Remove major grid lines
+    # panel.grid.minor = element_blank()   # Remove minor grid lines
+  ) +
+  ylab("Word Recognition - Reaction Time (ms)")+
+  # xlab("Accent Identification - Confidence Rating")+
+  xlab("Accent Identification - Accuracy (%)")+
+  ylim(0,2000)+
+  xlim(0,100)
+
+print(plot)
+
+ggsave(paste0("C:/Users/hughm/Dropbox/Cochlear_IIR_Project/Analysis/Figures/",variables_1,"_",variables_3,".jpg"),plot = plot, device = "jpg",scale = 1.5, width = 8,height = 6)
+
+
+  
