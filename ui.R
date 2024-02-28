@@ -1,31 +1,39 @@
 shinyUI(fluidPage(
 
     # Application title
-    titlePanel("Most Popular Programming Languages"),
+    titlePanel("Read Excel"),
 
     # Sidebar with a slider input for number of bins
     sidebarLayout(
         sidebarPanel(
-            # We are putting inour input widgets, dropdown input
-            # Some of these are the ones that we created in the global R file
-            # Selected is the stuff that you start with
-            selectInput(inputId = "language", 
-                        label = "Language", 
-                        choices = language_choices, 
-                        selected = c("Python","R"),
-                        multiple = T),
+          # Input: Select a file ----
+          fileInput("file1", h3("Choose xlsx File"),
+                    accept = c(".xlsx"),
           
-            dateRangeInput(inputId = "date_range", 
-                           label = "Date Range",
-                           start = date_start, 
-                           end = date_end)
+                    ),
+          
+          # Selecting which item you want
+          selectInput("plotType", label = h3("Graph Type"),
+                      choices = list("Scatterplot" = 1,"Box and Whisker" = 2,
+                                     "Correlation" = 3)
+                      ),
+          uiOutput("inputPanel") # Render input panel dynamically
         ),
+        
+        # Main panel for displaying outputs ----
+        mainPanel(
+          
+          plotOutput("plot")
+          
+        )
+    ),
+        
 
         # Show a plot of the generated distribution
         mainPanel(
             # Prepare placeholders
-          plotlyOutput(outputId = "plot_popularity"),
-          plotlyOutput(outputId = "plot_average_popularity")
+          # plotlyOutput(outputId = "plot_popularity"),
+          # plotlyOutput(outputId = "plot_average_popularity")
         )
     )
-))
+)
