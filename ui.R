@@ -1,7 +1,7 @@
 shinyUI(fluidPage(
   
   # Application title
-  titlePanel("Read Excel"),
+  titlePanel("Interactive Graphs"),
   
   # Sidebar with a file input and select input
   sidebarLayout(
@@ -14,7 +14,9 @@ shinyUI(fluidPage(
                   choices = list("Scatterplot" = 1, "Box and Whisker" = 2)),
       
       # Selecting which item you want
-      selectInput("numericColumn", label = h3("X Data"),
+      selectInput("x_column", label = h3("X Data"),
+                  choices = list("")),
+      selectInput("y_column", label = h3("Y Data"),
                   choices = list(""))
     ),
     

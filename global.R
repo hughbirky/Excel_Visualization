@@ -7,6 +7,7 @@ library(readr)
 library(lubridate)
 library(reshape2)
 library(readxl)
+library(xtable)
 
 # data prep
 
