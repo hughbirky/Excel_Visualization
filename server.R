@@ -21,7 +21,11 @@ shinyServer(function(input, output, session) {
     
     # Update select input with numeric column names
     updateSelectInput(session, "x_column", choices = names(df)[numeric_cols])
+    x_col <- input$x_column
+    print(paste0("Printing x_col",x_col))
     updateSelectInput(session, "y_column", choices = names(df)[numeric_cols])
+    y_col <- input$y_column
+    print(paste0("Printing y_col",y_col))
   })
   
   observeEvent(input$plotType, {
@@ -34,6 +38,15 @@ shinyServer(function(input, output, session) {
       print("Updating boxplot select input")
       # updateSelectInput(session, "boxplot_column", choices = input$numericColumn)
     }
+  })
+  
+  observeEvent(input$x_column, {
+    x_col <- input$x_column
+    
+  })
+  observeEvent(input$y_column, {
+    y_col <- input$y_column
+    
   })
   
   # Dynamic rendering of inputPanel
@@ -62,7 +75,7 @@ shinyServer(function(input, output, session) {
       if (plotType == "1") {
         # Generate scatterplot
         print(is.character(input$x_column))
-        ggplot(aes_string(x = input$x_column,y = input$y_column)) +
+        ggplot(aes_string(x = x_col,y = y_col)) +
           geom_point() +
           xlim(input$x_range) +
           ylim(input$y_range)
