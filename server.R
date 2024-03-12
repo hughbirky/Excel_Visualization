@@ -1,90 +1,62 @@
 shinyServer(function(input, output, session) {
   
+  # This is solely to check what we are downloading/adding
   observe({
     print("File uploaded")
     print(input$file1)
   })
   
-  observeEvent(input$file1, {
-    print("File uploaded event triggered")
-    # Read the uploaded file
-    inFile <- input$file1
-    if(is.null(inFile))
-      return(NULL)
-    df <- read_excel(inFile$datapath, sheet = 1)
-    
-    # Get column names with numeric values
-    numeric_cols <- sapply(df, is.numeric)
-    
-    # Print numeric column names
-    # print(names(df)[numeric_cols])
-    
-    # Update select input with numeric column names
-    updateSelectInput(session, "x_column", choices = names(df)[numeric_cols])
-    x_col <- input$x_column
-    print(paste0("Printing x_col",x_col))
-    updateSelectInput(session, "y_column", choices = names(df)[numeric_cols])
-    y_col <- input$y_column
-    print(paste0("Printing y_col",y_col))
-  })
+  # We want a reactive expression here in order to return the data from the spreadsheet
+  data1 <- reactiveValues(data = NULL)
+  x_col <- reactiveValues(name = NULL)
+  y_col <- reactiveValues(name = NULL)
+  print(data1)
   
-  observeEvent(input$plotType, {
-    print("Plot type changed")
-    plotType <- input$plotType
-    print(plotType)
-    if(plotType == "1") {
-      print("Updating scatterplot select inputs")
-    } else if (plotType == "2") {
-      print("Updating boxplot select input")
-      # updateSelectInput(session, "boxplot_column", choices = input$numericColumn)
-    }
+  
+  observeEvent(input$file1, {
+    req(input$file1)
+    data1$data <- read_excel(input$file1$datapath)
+    data1$data <- data1$data %>% select(where(is.numeric))
+    
+    updateSelectInput(session, "x_column", choices = names(data1$data))
+    updateSelectInput(session, "y_column", choices = names(data1$data))
+    
+    x_col <- input$x_column[1]
+    y_col <- input$y_column[1]
   })
   
   observeEvent(input$x_column, {
-    x_col <- input$x_column
+    print("X_column Changed")
+    print("Original Data")
+    print(data1$data)
+    print("Filtered Data")
+    
+    if(!is.null(data1$data)){
+      data_filtered <- data1$data %>%
+        select(input$x_column,input$y_column)
+      # Getting rid of different data points
+      data_filtered <-na.omit(data_filtered)
+      print(data_filtered)
+    }
+    
+    
+    
+    
     
   })
   observeEvent(input$y_column, {
-    y_col <- input$y_column
+    print("y_column Changed")
+    if(!is.null(data1$data)){
+      data_filtered <- data1$data %>%
+        select(input$x_column,input$y_column)
+      # Getting rid of different data points
+      data_filtered <-na.omit(data_filtered)
+      print(data_filtered)
+    }
+    
     
   })
   
-  # Dynamic rendering of inputPanel
-  output$inputPanel <- renderUI({
-    plotType <- input$plotType
-    if(plotType == "1") {
-      # Define the inputs for the scatterplot
-      tagList(
-        numericInput("n_points", "Number of Points", value = 100),
-        sliderInput("x_range", "X Range", min = 0, max = 10, value = c(0, 10)),
-        sliderInput("y_range", "Y Range", min = 0, max = 10, value = c(0, 10))
-      )
-    } else if (plotType == "2") {
-      # Define inputs for Box and Whisker
-      tagList(
-        numericInput("n_bins", "Number of Bins", value = 30),
-        sliderInput("data_range", "Data Range", min = 0, max = 100, value = c(0, 100)),
-      )
-    }
-  })
   
-  # Creating an output plot
-  output$plot <- renderPlot({
-    plotType <- input$plotType
-    if(!is.null(input$file1)){
-      if (plotType == "1") {
-        # Generate scatterplot
-        print(is.character(input$x_column))
-        ggplot(aes_string(x = x_col,y = y_col)) +
-          geom_point() +
-          xlim(input$x_range) +
-          ylim(input$y_range)
-      } else if (plotType == "2") {
-        # Generate boxplot
-        ggplot(data.frame(x = rnorm(100)), aes(x = 1, y = x)) +
-          geom_boxplot()
-      }
-    }
-  })
   
 })
