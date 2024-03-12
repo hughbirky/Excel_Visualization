@@ -1,62 +1,43 @@
 shinyServer(function(input, output, session) {
   
-  # This is solely to check what we are downloading/adding
-  observe({
-    print("File uploaded")
-    print(input$file1)
-  })
   
   # We want a reactive expression here in order to return the data from the spreadsheet
   data1 <- reactiveValues(data = NULL)
-  x_col <- reactiveValues(name = NULL)
-  y_col <- reactiveValues(name = NULL)
-  print(data1)
   
-  
+  # This observe event watches for when the file is uploaded and executes
   observeEvent(input$file1, {
+    # This requires the file to exist before executing
     req(input$file1)
+    # Assigns the input data to our reactive value
     data1$data <- read_excel(input$file1$datapath)
+    # Filters the columns that only contain numeric values
     data1$data <- data1$data %>% select(where(is.numeric))
     
+    # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "x_column", choices = names(data1$data))
     updateSelectInput(session, "y_column", choices = names(data1$data))
     
-    x_col <- input$x_column[1]
-    y_col <- input$y_column[1]
   })
-  
-  observeEvent(input$x_column, {
-    print("X_column Changed")
-    print("Original Data")
-    print(data1$data)
-    print("Filtered Data")
+
+  # This actually outputs the plot
+  output$plot <- renderPlot({
     
-    if(!is.null(data1$data)){
-      data_filtered <- data1$data %>%
-        select(input$x_column,input$y_column)
-      # Getting rid of different data points
-      data_filtered <-na.omit(data_filtered)
-      print(data_filtered)
-    }
+    # Requires the data, x column, and y column data before running
+    req(data1$data)
+    req(input$y_column)
+    req(input$x_column)
     
+    # Filters the data fram to only have the columns we want from the select input
+    data_filtered <- data1$data %>%
+      select(input$x_column,input$y_column)
+    # Getting rid of NA values
+    data_filtered <-na.omit(data_filtered)
     
-    
-    
-    
-  })
-  observeEvent(input$y_column, {
-    print("y_column Changed")
-    if(!is.null(data1$data)){
-      data_filtered <- data1$data %>%
-        select(input$x_column,input$y_column)
-      # Getting rid of different data points
-      data_filtered <-na.omit(data_filtered)
-      print(data_filtered)
-    }
-    
+    # Plots the data on a scatterplot
+    ggplot(data_filtered, aes_string(x = input$x_column,y = input$y_column)) +
+      geom_point(size = input$point_size, color = input$point_color) +
+      labs(x = input$x_column, y = input$y_column, title = "Scatterplot")
     
   })
-  
-  
   
 })

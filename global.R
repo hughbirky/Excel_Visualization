@@ -8,7 +8,8 @@ library(lubridate)
 library(reshape2)
 library(readxl)
 library(xtable)
-
+library(shinyWidgets)
+library(colourpicker)
 # data prep
 
 # source: https://www.kaggle.com/datasets/muhammadkhalid/most-popular-programming-languages-since-2004
