@@ -29,10 +29,27 @@ shinyServer(function(input, output, session) {
     # Getting rid of NA values
     data_filtered <-na.omit(data_filtered)
     
+    
+    
+    # Changing the label of the x and y axis
+    if(input$x_title == "X Axis"){
+      x = input$x_column
+    } else {
+      x = input$x_title
+    }
+    if(input$y_title == "Y Axis"){
+      y = input$y_column
+    } else {
+      y = input$y_title
+    }
+    
+    
+    
+    
     # Plotting Data
     plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
       geom_point(size = input$point_size, color = input$point_color) +
-      labs(x = input$x_column, y = input$y_column, title = "Scatterplot") +
+      labs(x = x, y = y, title = input$plot_title) +
       theme(
         legend.position = "none",
         plot.title = element_text(size=20),

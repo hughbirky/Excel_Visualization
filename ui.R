@@ -67,6 +67,16 @@ shinyUI(fluidPage(
           
         ),
         
+        tabPanel("Axes/Labels",
+                 
+                 # Input for axes and title labels
+                 textInput("plot_title", label = "Plot Title", value = "Plot"),
+                 textInput("x_title", label = "X Axis Title", value = "X Axis"),
+                 textInput("y_title", label = "Y Axis Title", value = "Y Axis"),
+                 
+                 
+          
+        ),
         tabPanel("Export",
                  # Input for plot width
                  numericInput("plot_width", "Plot Export Width", value = 8),
