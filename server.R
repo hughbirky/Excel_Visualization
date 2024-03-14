@@ -18,54 +18,93 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "y_column", choices = names(data1$data))
     
   })
+  
+  observeEvent(input$color_boolean, {
+    # This requires the file to exist before executing
+    req(input$file1)
+    # Assigns the input data to our reactive value
+    data1$data <- read_excel(input$file1$datapath)
+    # Filters the columns that only contain numeric values
+    data1$data <- data1$data %>% select(where(is.numeric))
+    
+    # Updating the input nodes on the screen to be the names of the columns
+    updateSelectInput(session, "color_data", choices = names(data1$data))
+  })
 
   
   
   # Function for generating the plot
   generatePlot <- function(data_filtered, input) {
-    # Filters the data fram to only have the columns we want from the select input
-    data_filtered <- data1$data %>%
-      select(input$x_column,input$y_column)
-    # Getting rid of NA values
-    data_filtered <-na.omit(data_filtered)
-    
     
     
     # Changing the label of the x and y axis
-    if(input$x_title == "X Axis"){
+    if(input$x_title == ""){
       x = input$x_column
     } else {
       x = input$x_title
     }
-    if(input$y_title == "Y Axis"){
+    if(input$y_title == ""){
       y = input$y_column
     } else {
       y = input$y_title
     }
+    if(input$legend_title == ""){
+      legend = input$color_data
+    } else {
+      legend = input$legend_title
+    }
     
     
     
-    
+    if(!input$color_boolean){
+      # Filters the data fram to only have the columns we want from the select input
+      data_filtered <- data1$data %>%
+        select(input$x_column,input$y_column)
+      # Getting rid of NA values
+      data_filtered <-na.omit(data_filtered)
+      # Plotting when no color included
+      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
+        geom_point(size = input$point_size, color = input$point_color) +
+        labs(x = x, y = y, title = input$plot_title)
+    } else {
+      # Filtering to include color
+      # Filters the data fram to only have the columns we want from the select input
+      req(input$color_data)
+      data_filtered <- data1$data %>%
+        select(input$x_column,input$y_column,input$color_data)
+      # Getting rid of NA values
+      data_filtered <-na.omit(data_filtered)
+      
+      # Plotting for color included
+      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
+        scale_color_continuous(low = input$data_color1, high = input$data_color2)+
+        geom_point(size = input$point_size) +
+        labs(x = x, y = y, title = input$plot_title)
+    }
     # Plotting Data
-    plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
-      geom_point(size = input$point_size, color = input$point_color) +
-      labs(x = x, y = y, title = input$plot_title) +
+    plot <- plot  +
+      labs(x = x, y = y, title = input$plot_title, colour = legend) +
       theme(
-        legend.position = "none",
+        # legend.position = "none",
         plot.title = element_text(size=20),
-        axis.title.x = element_text(angle = 0, hjust = 0.5,size = 30),
-        axis.title.y = element_text(angle = 90, vjust = 0.5,size = 30),
-        axis.text.x = element_text(size = 25),  # Increase size of x-axis numbers
-        axis.text.y = element_text(size = 25),  # Increase size of y-axis numbers
-        text = element_text(family = "Arial")
-      )
+        axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
+        axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
+        axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
+        axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
+        text = element_text(family = "Arial"),
+        # legend.title = element_text(input$legend_title)
+        # plot.border = element_rect(color = "black",size = 1)  # Border around the plot
+      ) 
     
+
+       
+
     
     # Plotting in case there are gridlines
     if (input$gridlines && input$minor_gridlines) {
        plot +
         theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
               panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_line(color = input$minor_gridline_color)
               )
@@ -74,7 +113,7 @@ shinyServer(function(input, output, session) {
       plot +
         labs(x = input$x_column, y = input$y_column, title = "Scatterplot") +
         theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
               panel.grid.major = element_blank(),
               panel.grid.minor = element_line(color = input$minor_gridline_color)
               )
@@ -82,14 +121,14 @@ shinyServer(function(input, output, session) {
     } else if(input$gridlines && !input$minor_gridlines) {
       plot +
         theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
               panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_blank())
       # Condition where you want neither
     } else if(!input$gridlines && !input$minor_gridlines) {
       plot +
         theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
               panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())
     }

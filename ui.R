@@ -18,6 +18,8 @@ shinyUI(fluidPage(
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Boxplot")),
+                 # Checkbox for color addition or not
+                 checkboxInput("color_boolean", "Color Data", value = FALSE),
                  
                 # Panel for Scatterplot Settings
                  conditionalPanel(
@@ -26,7 +28,13 @@ shinyUI(fluidPage(
                    selectInput("x_column", label = "X Data",
                                choices = list("")),
                    selectInput("y_column", label = "Y Data",
-                               choices = list(""))
+                               choices = list("")),
+                   # Conditional panel for using color
+                   conditionalPanel(
+                     condition = "input.color_boolean",
+                     selectInput("color_data", label = "Color Data",
+                                 choices = list("")),
+                   )
                  ), 
                   
                  
@@ -41,10 +49,14 @@ shinyUI(fluidPage(
                  # Select point size
                  sliderInput("point_size", "Point Size", value = 1, min = 0.01, max = 5),
                  # Select point color
-                 colourInput("point_color", "Point Color", "black"),
+                 conditionalPanel(
+                   condition = "!input.color_boolean",
+                   colourInput("point_color", "Point Color", "black")
+                 ),
+                 
                  colourInput("background_color", "Background Color", "lightgrey"),
                  colourInput("panel_color", "Panel Color", "grey"),
-
+                 # colourInput("border_color", "Border Color", "white"),
                  
                  # Panel for Scatterplot Settings
                  conditionalPanel(
@@ -63,7 +75,13 @@ shinyUI(fluidPage(
                    conditionalPanel(
                      condition = "input.minor_gridlines",
                      colourInput("minor_gridline_color", "Minor Gridline Color", value = "white"))
-                 )
+                  ),
+                   # Conditional panel for showing the color option for the gridlines
+                   conditionalPanel(
+                     condition = "input.color_boolean",
+                     colourInput("data_color1", "Color Gradient 1", value = "green"),
+                     colourInput("data_color2", "Color Gradient 2", value = "red"),
+                   ),
           
         ),
         
@@ -71,9 +89,20 @@ shinyUI(fluidPage(
                  
                  # Input for axes and title labels
                  textInput("plot_title", label = "Plot Title", value = "Plot"),
-                 textInput("x_title", label = "X Axis Title", value = "X Axis"),
-                 textInput("y_title", label = "Y Axis Title", value = "Y Axis"),
+                 textInput("x_title", label = "X Axis Title", value = ""),
+                 textInput("y_title", label = "Y Axis Title", value = ""),
                  
+                 # Panel for the axes hiding
+                 conditionalPanel(
+                   condition = "input.color_boolean",
+                   textInput("legend_title", label = "Legend Title", value = "")
+                 ),
+                 
+                 
+                 # Select axes size
+                 sliderInput("axes_size", "Axes Size", value = 15, min = 1, max = 30),
+                 # Select numbers size
+                 sliderInput("num_size", "Number Size", value = 10, min = 1, max = 30),
                  
           
         ),
