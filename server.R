@@ -33,29 +33,46 @@ shinyServer(function(input, output, session) {
 
   
   
-  # Function for generating the plot
-  generatePlot <- function(data_filtered, input) {
+  
+  
+  
+  
+  
+  
+  
+  
+  #########################################################################
+  #########################################################################
+  # Scatterplot function
+  # Function for generating the plot that is called later in the script
+  generateScatterplot <- function(data_filtered, input) {
     
     
     # Changing the label of the x and y axis
+    # If there is no input in the text box, make the title the name of the column
     if(input$x_title == ""){
       x = input$x_column
     } else {
+      # Otherwise, make it the text entered
       x = input$x_title
     }
+    # If there is no input in the text box, make the title the name of the column
     if(input$y_title == ""){
       y = input$y_column
     } else {
+      # Otherwise, make it the text entered
       y = input$y_title
     }
+    # If there is no input in the text box, make the title the name of the column
     if(input$legend_title == ""){
       legend = input$color_data
     } else {
+      # Otherwise, make it the text entered
       legend = input$legend_title
     }
     
     
-    
+    # Checking to see if the person is plotting with color or not
     if(!input$color_boolean){
       # Filters the data fram to only have the columns we want from the select input
       data_filtered <- data1$data %>%
@@ -81,6 +98,10 @@ shinyServer(function(input, output, session) {
         geom_point(size = input$point_size) +
         labs(x = x, y = y, title = input$plot_title)
     }
+    # Adding a regression line
+    if(input$regression_boolean){
+      plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
+    }
     # Plotting Data
     plot <- plot  +
       labs(x = x, y = y, title = input$plot_title, colour = legend) +
@@ -95,10 +116,6 @@ shinyServer(function(input, output, session) {
         # legend.title = element_text(input$legend_title)
         # plot.border = element_rect(color = "black",size = 1)  # Border around the plot
       ) 
-    
-
-       
-
     
     # Plotting in case there are gridlines
     if (input$gridlines && input$minor_gridlines) {
@@ -135,6 +152,27 @@ shinyServer(function(input, output, session) {
   }
 
   
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # This actually outputs the plot
   output$plot <- renderPlot({
     
@@ -144,7 +182,7 @@ shinyServer(function(input, output, session) {
     req(input$x_column)
     
     # Calling the function to generate the plot
-    generatePlot(data_filtered, input)
+    generateScatterplot(data_filtered, input)
     
     
   })
@@ -164,7 +202,7 @@ shinyServer(function(input, output, session) {
       req(input$y_column)
       req(input$x_column)
       
-      plot <- generatePlot(data_filtered, input)
+      plot <- generateScatterplot(data_filtered, input)
       ggsave(file, plot,scale = 1, width = input$plot_width,height = input$plot_height)
     }
   )

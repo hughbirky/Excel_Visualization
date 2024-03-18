@@ -21,6 +21,11 @@ shinyUI(fluidPage(
                  # Checkbox for color addition or not
                  checkboxInput("color_boolean", "Color Data", value = FALSE),
                  
+                 # Checkbox for regression or not
+                 checkboxInput("regression_boolean", "Regression", value = FALSE),
+                 
+                 
+                 
                 # Panel for Scatterplot Settings
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot'",
@@ -37,7 +42,15 @@ shinyUI(fluidPage(
                    )
                  ), 
                   
-                 
+                # Panel for Regression Settings
+                conditionalPanel(
+                  condition = "input.regression_boolean",
+                  # Selecting which item you want for each column
+                  selectInput("regression_method", label = "Regression Type",
+                              choices = list("lm","glm","gam","loess","rlm")),
+                  # Deciding whether or not to choose the confidence interval
+                  checkboxInput("regression_se", "Confidence Interval", value = FALSE),
+                ),
                  
                   
                   
@@ -81,6 +94,11 @@ shinyUI(fluidPage(
                      condition = "input.color_boolean",
                      colourInput("data_color1", "Color Gradient 1", value = "green"),
                      colourInput("data_color2", "Color Gradient 2", value = "red"),
+                   ),
+                   # Conditional panel for showing the color option for the regression line
+                   conditionalPanel(
+                     condition = "input.regression_boolean",
+                     colourInput("regression_color", "Regression Color", value = "blue"),
                    ),
           
         ),
