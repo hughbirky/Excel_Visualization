@@ -105,6 +105,19 @@ shinyUI(fluidPage(
         
         tabPanel("Axes/Labels",
                  
+                 # Allowing them to override the plotting
+                 checkboxInput("override_axes", label = "Override Axes", value = FALSE),
+                 
+                 # Only having these pop up if the box is checked
+                 conditionalPanel(
+                   condition = "input.override_axes",
+                   # Input for x_axis
+                   sliderInput("override_x", "X Axis Range", min = 0, max = 7000, value = c(0,6000)),
+                   # Input for y_axis
+                   sliderInput("override_y", "Y Axis Range", min = 0, max = 7000, value = c(0,6000)),
+                 ),
+                 
+                 
                  # Input for axes and title labels
                  textInput("plot_title", label = "Plot Title", value = "Plot"),
                  textInput("x_title", label = "X Axis Title", value = ""),
@@ -142,5 +155,7 @@ shinyUI(fluidPage(
     mainPanel(
       plotOutput("plot")
     )
+    )
   )
-))
+)
+

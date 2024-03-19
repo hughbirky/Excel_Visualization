@@ -102,6 +102,15 @@ shinyServer(function(input, output, session) {
     if(input$regression_boolean){
       plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
     }
+    
+    
+    # Overriding axes bound
+    if(input$override_axes){
+      plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
+    }
+    
+    
+    
     # Plotting Data
     plot <- plot  +
       labs(x = x, y = y, title = input$plot_title, colour = legend) +
