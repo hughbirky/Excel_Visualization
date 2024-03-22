@@ -13,6 +13,7 @@ shinyServer(function(input, output, session) {
     # Filters the columns that only contain numeric values
     data1$data <- data1$data %>% select(where(is.numeric))
     
+    
     # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "x_column", choices = names(data1$data))
     updateSelectInput(session, "y_column", choices = names(data1$data))
@@ -30,6 +31,27 @@ shinyServer(function(input, output, session) {
     # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "color_data", choices = names(data1$data))
   })
+  
+  
+  # Updating min and max
+  observe({
+    if(input$override_axes){
+      req(data1$data)  # Ensure data is available
+      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+      
+      # Finding the min and max of the x and y columns
+      x_max <- max(data1$data[[input$x_column]], na.rm = TRUE)
+      x_min <- min(data1$data[[input$x_column]], na.rm = TRUE)
+      y_max <- max(data1$data[[input$y_column]], na.rm = TRUE)
+      y_min <- min(data1$data[[input$y_column]], na.rm = TRUE)
+      
+      
+      # Update the sliderInput with new max and min values
+      updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
+      updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
+    }
+  })
+  
 
   
   
@@ -96,7 +118,8 @@ shinyServer(function(input, output, session) {
       plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
         scale_color_continuous(low = input$data_color1, high = input$data_color2)+
         geom_point(size = input$point_size) +
-        labs(x = x, y = y, title = input$plot_title)
+        labs(x = x, y = y, title = input$plot_title) +
+        theme(legend.background = element_rect(fill = input$legend_background))
     }
     # Adding a regression line
     if(input$regression_boolean){

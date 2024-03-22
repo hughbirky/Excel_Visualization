@@ -18,15 +18,36 @@ shinyUI(fluidPage(
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Boxplot")),
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 ###############################################################
+                 # Normal Scatterplot
                  # Checkbox for color addition or not
                  checkboxInput("color_boolean", "Color Data", value = FALSE),
                  
                  # Checkbox for regression or not
                  checkboxInput("regression_boolean", "Regression", value = FALSE),
                  
-                 
-                 
-                # Panel for Scatterplot Settings
+                 # Panel for Scatterplot Settings
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot'",
                    # Selecting which item you want for each column
@@ -41,7 +62,6 @@ shinyUI(fluidPage(
                                  choices = list("")),
                    )
                  ), 
-                  
                 # Panel for Regression Settings
                 conditionalPanel(
                   condition = "input.regression_boolean",
@@ -51,6 +71,25 @@ shinyUI(fluidPage(
                   # Deciding whether or not to choose the confidence interval
                   checkboxInput("regression_se", "Confidence Interval", value = FALSE),
                 ),
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                ################################################################
+                # Dual Scatterplot
                  
                   
                   
@@ -71,6 +110,27 @@ shinyUI(fluidPage(
                  colourInput("panel_color", "Panel Color", "grey"),
                  # colourInput("border_color", "Border Color", "white"),
                  
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 ###############################################################
+                 # Normal Scatterplot
                  # Panel for Scatterplot Settings
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot'",
@@ -100,6 +160,32 @@ shinyUI(fluidPage(
                      condition = "input.regression_boolean",
                      colourInput("regression_color", "Regression Color", value = "blue"),
                    ),
+                 # Panel for the axes hiding
+                 conditionalPanel(
+                   condition = "input.color_boolean",
+                   colourInput("legend_background", "Legend Background Color", value = "white")
+                 ),
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                  
           
         ),
         
@@ -107,6 +193,9 @@ shinyUI(fluidPage(
                  
                  # Allowing them to override the plotting
                  checkboxInput("override_axes", label = "Override Axes", value = FALSE),
+                 
+                 
+                 
                  
                  # Only having these pop up if the box is checked
                  conditionalPanel(
@@ -126,7 +215,7 @@ shinyUI(fluidPage(
                  # Panel for the axes hiding
                  conditionalPanel(
                    condition = "input.color_boolean",
-                   textInput("legend_title", label = "Legend Title", value = "")
+                   textInput("legend_title", label = "Legend Title", value = ""),
                  ),
                  
                  
