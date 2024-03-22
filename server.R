@@ -20,6 +20,10 @@ shinyServer(function(input, output, session) {
     
   })
   
+  
+  
+  
+  
   observeEvent(input$color_boolean, {
     # This requires the file to exist before executing
     req(input$file1)
@@ -93,6 +97,7 @@ shinyServer(function(input, output, session) {
       legend = input$legend_title
     }
     
+    print(input$plotType)
     
     # Checking to see if the person is plotting with color or not
     if(!input$color_boolean){
