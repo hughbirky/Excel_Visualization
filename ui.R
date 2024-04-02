@@ -3,6 +3,34 @@ shinyUI(fluidPage(
   # Application title
   titlePanel("Interactive Graphs"),
   
+  
+  # tags$head(
+  #   tags$script(HTML(
+  #     "
+  #     $(document).ready(function() {
+  #       // Function to calculate the width of selectInput based on the length of the options
+  #       function setSelectInputWidth(inputId) {
+  #         var maxWidth = 0;
+  #         $('#' + inputId + ' option').each(function() {
+  #           var width = $(this).text().length * 8; // Adjust multiplier for proper scaling
+  #           maxWidth = Math.max(maxWidth, width);
+  #         });
+  #         $('#' + inputId).css('width', maxWidth + 'px');
+  #       }
+  # 
+  #       // Call the function for each selectInput on initial load
+  #       setSelectInputWidth('x_column');
+  # 
+  #       // Call the function whenever the options change
+  #       $('#x_column').change(function() {
+  #         setSelectInputWidth('x_column');
+  #       });
+  #     });
+  #     "
+  #   ))
+  # ),
+  
+  
   # Sidebar with a file input and select input
   sidebarLayout(
     sidebarPanel(
@@ -20,13 +48,7 @@ shinyUI(fluidPage(
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot")),
                  
 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
+        
                  
                  
                  

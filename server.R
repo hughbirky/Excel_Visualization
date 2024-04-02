@@ -42,10 +42,16 @@ shinyServer(function(input, output, session) {
     if(input$override_axes){
       req(data1$data)  # Ensure data is available
       req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+      x_max1 <- vector(length = 2)
+      x_min1 <- vector(length = 2)
       
       # Finding the min and max of the x and y columns
-      x_max <- max(data1$data[[input$x_column]], na.rm = TRUE)
-      x_min <- min(data1$data[[input$x_column]], na.rm = TRUE)
+      x_max1[1] <- max(data1$data[[input$x_column]], na.rm = TRUE)
+      x_max1[2] <- max(data1$data[[input$x_column2]], na.rm = TRUE)
+      x_max <- max(x_max1)
+      x_min1[1] <- min(data1$data[[input$x_column]], na.rm = TRUE)
+      x_min1[2] <- min(data1$data[[input$x_column2]], na.rm = TRUE)
+      x_min <- min(x_min1)
       y_max <- max(data1$data[[input$y_column]], na.rm = TRUE)
       y_min <- min(data1$data[[input$y_column]], na.rm = TRUE)
       
@@ -346,12 +352,11 @@ shinyServer(function(input, output, session) {
     plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
       geom_point(size = input$point_size) +
       labs(x = x, y = y, title = input$plot_title) +
-      scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
-      scale_fill_manual(values = c(input$point_color1, input$point_color2)) 
+      scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) 
     
     # Adding a regression line
     if(input$regression_boolean){
-      plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se)
+      plot <- plot + geom_smooth(method = input$regression_method, aes(color = type), se = input$regression_se)
     }
       
     # Overriding axes bound
