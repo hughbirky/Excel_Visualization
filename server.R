@@ -17,10 +17,15 @@ shinyServer(function(input, output, session) {
     # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "x_column", choices = names(data1$data))
     updateSelectInput(session, "y_column", choices = names(data1$data))
+    updateSelectInput(session, "x_column2", choices = names(data1$data))
     
   })
   
   
+  observeEvent(input$x_column,{
+    # Making the first data frame to hold the info from the first item
+    print("Changing X_Column")
+  })
   
   
   
@@ -210,6 +215,110 @@ shinyServer(function(input, output, session) {
   
   
   
+  
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  #########################################################################
+  #########################################################################
+  # Multiple Scatterplot function
+  # Function for generating the plot that is called later in the script
+  generateMultipleScatterplot <- function(data_filtered, input) {
+    
+    
+    # Changing the label of the x and y axis
+    # If there is no input in the text box, make the title the name of the column
+    if(input$x_title == ""){
+      x = input$x_column
+    } else {
+      # Otherwise, make it the text entered
+      x = input$x_title
+    }
+    # If there is no input in the text box, make the title the name of the column
+    if(input$y_title == ""){
+      y = input$y_column
+    } else {
+      # Otherwise, make it the text entered
+      y = input$y_title
+    }
+    # If there is no input in the text box, make the title the name of the column
+    if(input$legend_title == ""){
+      legend = input$color_data
+    } else {
+      # Otherwise, make it the text entered
+      legend = input$legend_title
+    }
+    
+
+    # Making the first data frame to hold the info from the first item
+    data1_filtered <- data.frame(
+      x_data <- data1$data[,input$x_column],
+      y_data <- data1$data[,input$y_column]
+      )
+    
+    # Renaming the x column and getting rid of NAs
+    data1_filtered <- data1_filtered %>%
+      rename(x_data = input$x_column) %>%
+      rename(y_data = paste0(input$y_column,".1")) 
+    
+    # Making the second data frame
+    data2_filtered <- data.frame(
+      x_data <- data1$data[,input$x_column2],
+      y_data <- data1$data[,input$y_column]
+    )
+
+    # Renaming the x column and getting rid of NAs
+    data2_filtered <- data2_filtered %>%
+      rename(x_data = input$x_column2) %>%
+      rename(y_data = paste0(input$y_column,".1")) 
+    
+
+    # Adding types for the titles
+    data1_filtered$type <- "Type1"
+    data2_filtered$type <- "Type2"
+    
+    
+    
+    
+    
+    # print(data1_filtered)
+    # print(data2_filtered)
+    
+    # Combining the data frames
+    combined_data <- rbind(data1_filtered,data2_filtered)
+    
+    # print(combined_data)
+    
+    ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
+      geom_point() +
+      scale_color_manual(values = c("red", "blue")) +
+      theme_minimal()
+    
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   # This actually outputs the plot
   output$plot <- renderPlot({
     
@@ -218,8 +327,16 @@ shinyServer(function(input, output, session) {
     req(input$y_column)
     req(input$x_column)
     
+    
+    print(paste0("X_Column: ",input$x_column))
     # Calling the function to generate the plot
-    generateScatterplot(data_filtered, input)
+    if(input$plotType == "Scatterplot"){
+      generateScatterplot(data_filtered, input)
+    } else if(input$plotType == "Multiple Scatterplot"){
+      req(input$x_column2)
+      generateMultipleScatterplot(data_filtered, input)
+    }
+    
     
     
   })

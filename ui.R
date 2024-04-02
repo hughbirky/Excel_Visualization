@@ -39,30 +39,47 @@ shinyUI(fluidPage(
                  
                  
                  ###############################################################
-                 # Normal Scatterplot
-                 # Checkbox for color addition or not
+                 # Scatterplots
+                 # Checkbox for whether or not it is a scatterplot
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot'",
-                   checkboxInput("color_boolean", "Color Data", value = FALSE),
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
                    
                    # Checkbox for regression or not
                    checkboxInput("regression_boolean", "Regression", value = FALSE),
+        
                    
-                   # Panel for Scatterplot Settings
+                   ###############################################################
+                   # Scatterplot specific
                    conditionalPanel(
+                     # Doing color options if they are in the scatterplot condition
                      condition = "input.plotType == 'Scatterplot'",
-                     # Selecting which item you want for each column
-                     selectInput("x_column", label = "X Data",
-                                 choices = list("")),
-                     selectInput("y_column", label = "Y Data",
-                                 choices = list("")),
+                     checkboxInput("color_boolean", "Color Data", value = FALSE),
                      # Conditional panel for using color
                      conditionalPanel(
                        condition = "input.color_boolean",
                        selectInput("color_data", label = "Color Data",
                                    choices = list("")),
-                     )
-                   ), 
+                     ),
+                   ),
+                   
+                   
+
+                   # Selecting which item you want for each column
+                   selectInput("y_column", label = "Y Data",
+                               choices = list("")),
+                   selectInput("x_column", label = "X Data",
+                               choices = list("")),
+                   
+                   
+                   conditionalPanel(
+                     condition = "input.plotType == 'Multiple Scatterplot'",
+                     # Selecting which item you want for each column of the second set
+                     selectInput("x_column2", label = "X Data (Second Set)",
+                                 choices = list("")),
+                   ),
+                   
+            
+  
                    # Panel for Regression Settings
                    conditionalPanel(
                      condition = "input.regression_boolean",
@@ -88,10 +105,7 @@ shinyUI(fluidPage(
                 
                 
                 
-                
-                
-                ################################################################
-                # Dual Scatterplot
+
                  
                   
                   
@@ -115,27 +129,14 @@ shinyUI(fluidPage(
                  
                  
                  
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
+            
                  
                  
                  ###############################################################
                  # Normal Scatterplot
                  # Panel for Scatterplot Settings
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
                    
                    # Checkbox for gridlines
                    checkboxInput("gridlines", "Show Major Gridlines", value = TRUE),
@@ -146,14 +147,15 @@ shinyUI(fluidPage(
                    conditionalPanel(
                       condition = "input.gridlines",
                       colourInput("major_gridline_color", "Major Gridline Color", value = "white"),
-                   ),
+                      ),
                    conditionalPanel(
                      condition = "input.minor_gridlines",
-                     colourInput("minor_gridline_color", "Minor Gridline Color", value = "white")),
+                     colourInput("minor_gridline_color", "Minor Gridline Color", value = "white"),
+                     ),
                   
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
-                     condition = "input.color_boolean",
+                     condition = "input.color_boolean && input.plotType == 'Scatterplot'",
                      colourInput("data_color1", "Color Gradient 1", value = "green"),
                      colourInput("data_color2", "Color Gradient 2", value = "red"),
                    ),
@@ -161,6 +163,11 @@ shinyUI(fluidPage(
                    conditionalPanel(
                      condition = "input.regression_boolean",
                      colourInput("regression_color", "Regression Color", value = "blue"),
+                     
+                     conditionalPanel(
+                       condition = "input.plotType = 'Multiple Scatterplot'",
+                       colourInput("regression_color_multiple", "Regression Color (Set 2)", value = "red"),
+                     )
                    ),
                  # Panel for the axes hiding
                   conditionalPanel(
@@ -203,7 +210,7 @@ shinyUI(fluidPage(
                  # Normal Scatterplot
                  # Allowing them to override the plotting
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
                    checkboxInput("override_axes", label = "Override Axes", value = FALSE),
                    # Only having these pop up if the box is checked
                    conditionalPanel(
@@ -222,7 +229,7 @@ shinyUI(fluidPage(
                    
                    # Panel for the axes hiding
                    conditionalPanel(
-                     condition = "input.color_boolean",
+                     condition = "input.color_boolean && input.plotType == 'Scatterplot'",
                      textInput("legend_title", label = "Legend Title", value = ""),
                    ),
                    
