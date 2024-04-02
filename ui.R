@@ -191,7 +191,7 @@ shinyUI(fluidPage(
                    
                    # Conditional panel for showing the color option for the regression line
                    conditionalPanel(
-                     condition = "input.regression_boolean",
+                     condition = "input.regression_boolean && input.plotType == 'Scatterplot'",
                      colourInput("regression_color", "Regression Color", value = "blue"),
                      
                      conditionalPanel(
@@ -201,7 +201,7 @@ shinyUI(fluidPage(
                    ),
                  # Panel for the axes hiding
                   conditionalPanel(
-                   condition = "input.color_boolean",
+                   condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot'",
                    colourInput("legend_background", "Legend Background Color", value = "white")
                   ),
                  ),
@@ -260,7 +260,7 @@ shinyUI(fluidPage(
                    # Panel for the axes hiding
                    conditionalPanel(
                      condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
-                     textInput("legend_title", label = "Legend Title", value = ""),
+                     textInput("legend_title", label = "Legend Title", value = "Legend"),
                    ),
                    
                    # Panel for changing the names of the conditions

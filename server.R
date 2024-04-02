@@ -352,7 +352,8 @@ shinyServer(function(input, output, session) {
     plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
       geom_point(size = input$point_size) +
       labs(x = x, y = y, title = input$plot_title) +
-      scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) 
+      scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
+      theme(legend.background = element_rect(fill = input$legend_background))
     
     # Adding a regression line
     if(input$regression_boolean){
