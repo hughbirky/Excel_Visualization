@@ -237,8 +237,15 @@ shinyUI(fluidPage(
                    
                    # Panel for the axes hiding
                    conditionalPanel(
-                     condition = "input.color_boolean && input.plotType == 'Scatterplot'",
+                     condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
                      textInput("legend_title", label = "Legend Title", value = ""),
+                   ),
+                   
+                   # Panel for changing the names of the conditions
+                   conditionalPanel(
+                     condition = "input.plotType == 'Multiple Scatterplot'",
+                     textInput("multiple_condition_title1", label = "Condition 1", value = ""),
+                     textInput("multiple_condition_title2", label = "Condition 2", value = ""),
                    ),
                    
                    

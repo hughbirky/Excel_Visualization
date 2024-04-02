@@ -258,11 +258,12 @@ shinyServer(function(input, output, session) {
     }
     # If there is no input in the text box, make the title the name of the column
     if(input$legend_title == ""){
-      legend = input$color_data
+      legend = input$x_column
     } else {
       # Otherwise, make it the text entered
       legend = input$legend_title
     }
+    
     
     
     # Making the first data frame to hold the info from the first item
@@ -318,10 +319,21 @@ shinyServer(function(input, output, session) {
         rename(y_data = paste0(input$y_column))
     }
     
-
+  
     # Adding types for the titles
-    data1_filtered$type <- "Type1"
-    data2_filtered$type <- "Type2"
+    if(input$multiple_condition_title1 == ""){
+      data1_filtered$type <- input$x_column
+    } else{
+      data1_filtered$type <- input$multiple_condition_title1
+    }
+    if(input$multiple_condition_title2 == ""){
+      data2_filtered$type <- input$x_column2
+    } else{
+      data2_filtered$type <- input$multiple_condition_title2
+    }
+
+    
+
     
     
   
@@ -330,11 +342,77 @@ shinyServer(function(input, output, session) {
     combined_data <- rbind(data1_filtered,data2_filtered)
     
     
-    
-    ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
+    # Baseline plot for all the stuff needed for all conditions
+    plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
       geom_point(size = input$point_size) +
       labs(x = x, y = y, title = input$plot_title) +
-      scale_color_manual(values = c(input$point_color1, input$point_color2)) 
+      scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
+      scale_fill_manual(values = c(input$point_color1, input$point_color2)) 
+    
+    # Adding a regression line
+    if(input$regression_boolean){
+      plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se)
+    }
+      
+    # Overriding axes bound
+    if(input$override_axes){
+      plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
+    }
+    
+    
+    # Plotting Data
+    plot <- plot  +
+      labs(x = x, y = y, title = input$plot_title, colour = legend) +
+      theme(
+        # legend.position = "none",
+        plot.title = element_text(size=20),
+        axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
+        axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
+        axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
+        axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
+        text = element_text(family = "Arial"),
+        # legend.title = element_text(input$legend_title)
+        # plot.border = element_rect(color = "black",size = 1)  # Border around the plot
+      ) 
+    
+    
+    
+    
+    
+    
+    
+    # Plotting in case there are gridlines
+    if (input$gridlines && input$minor_gridlines) {
+       plot +
+        theme(plot.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
+              panel.grid.major = element_line(color = input$major_gridline_color),
+              panel.grid.minor = element_line(color = input$minor_gridline_color)
+              )
+      # Condition where you only want minor gridlines
+    } else if(!input$gridlines && input$minor_gridlines) {
+      plot +
+        labs(x = input$x_column, y = input$y_column, title = "Scatterplot") +
+        theme(plot.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_line(color = input$minor_gridline_color)
+              )
+      # Condition where you only want major gridlines
+    } else if(input$gridlines && !input$minor_gridlines) {
+      plot +
+        theme(plot.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
+              panel.grid.major = element_line(color = input$major_gridline_color),
+              panel.grid.minor = element_blank())
+      # Condition where you want neither
+    } else if(!input$gridlines && !input$minor_gridlines) {
+      plot +
+        theme(plot.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color),
+              panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank())
+    }
     
   }
   
