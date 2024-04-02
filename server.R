@@ -22,11 +22,6 @@ shinyServer(function(input, output, session) {
   })
   
   
-  observeEvent(input$x_column,{
-    # Making the first data frame to hold the info from the first item
-    print("Changing X_Column")
-  })
-  
   
   
   observeEvent(input$color_boolean, {
@@ -131,6 +126,12 @@ shinyServer(function(input, output, session) {
         labs(x = x, y = y, title = input$plot_title) +
         theme(legend.background = element_rect(fill = input$legend_background))
     }
+    
+    
+    
+    
+    
+    
     # Adding a regression line
     if(input$regression_boolean){
       plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
@@ -158,6 +159,13 @@ shinyServer(function(input, output, session) {
         # legend.title = element_text(input$legend_title)
         # plot.border = element_rect(color = "black",size = 1)  # Border around the plot
       ) 
+    
+    
+    
+    
+    
+    
+    
     
     # Plotting in case there are gridlines
     if (input$gridlines && input$minor_gridlines) {
@@ -316,21 +324,17 @@ shinyServer(function(input, output, session) {
     data2_filtered$type <- "Type2"
     
     
-    
-    
-    
-    # print(data1_filtered)
-    # print(data2_filtered)
+  
     
     # Combining the data frames
     combined_data <- rbind(data1_filtered,data2_filtered)
     
-    # print(combined_data)
+    
     
     ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
-      geom_point() +
-      scale_color_manual(values = c("red", "blue")) +
-      theme_minimal()
+      geom_point(size = input$point_size) +
+      labs(x = x, y = y, title = input$plot_title) +
+      scale_color_manual(values = c(input$point_color1, input$point_color2)) 
     
   }
   

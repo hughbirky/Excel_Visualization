@@ -118,7 +118,7 @@ shinyUI(fluidPage(
                  sliderInput("point_size", "Point Size", value = 1, min = 0.01, max = 5),
                  # Select point color
                  conditionalPanel(
-                   condition = "!input.color_boolean",
+                   condition = "!input.color_boolean && input.plotType == 'Scatterplot'",
                    colourInput("point_color", "Point Color", "black")
                  ),
                  
@@ -159,6 +159,14 @@ shinyUI(fluidPage(
                      colourInput("data_color1", "Color Gradient 1", value = "green"),
                      colourInput("data_color2", "Color Gradient 2", value = "red"),
                    ),
+                   
+                   # Conditional panel for showing the color option for the gridlines
+                   conditionalPanel(
+                     condition = "input.plotType == 'Multiple Scatterplot'",
+                     colourInput("point_color1", "Set Color 1", value = "blue"),
+                     colourInput("point_color2", "Set Color 2", value = "red"),
+                   ),
+                   
                    # Conditional panel for showing the color option for the regression line
                    conditionalPanel(
                      condition = "input.regression_boolean",
