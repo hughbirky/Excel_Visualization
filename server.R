@@ -232,7 +232,7 @@ shinyServer(function(input, output, session) {
   # Function for generating the plot that is called later in the script
   generateMultipleScatterplot <- function(data_filtered, input) {
     
-    
+    print(paste0("Generate multiple x column: ", input$x_column))
     # Changing the label of the x and y axis
     # If there is no input in the text box, make the title the name of the column
     if(input$x_title == ""){
@@ -256,28 +256,59 @@ shinyServer(function(input, output, session) {
       legend = input$legend_title
     }
     
-
+    
     # Making the first data frame to hold the info from the first item
     data1_filtered <- data.frame(
       x_data <- data1$data[,input$x_column],
       y_data <- data1$data[,input$y_column]
       )
     
-    # Renaming the x column and getting rid of NAs
-    data1_filtered <- data1_filtered %>%
-      rename(x_data = input$x_column) %>%
-      rename(y_data = paste0(input$y_column,".1")) 
+
+    
+    
+    
+    
+    # Doesn't like when the columns are named the same thing
+    if(input$x_column == input$y_column){
+      # Renaming the x column and getting rid of NAs
+      data1_filtered <- data1_filtered %>%
+        rename(x_data = input$x_column) %>%
+        rename(y_data = paste0(input$y_column,".1")) 
+    } else{
+      # Renaming the x column and getting rid of NAs
+      data1_filtered <- data1_filtered %>%
+        rename(x_data = input$x_column) %>%
+        rename(y_data = paste0(input$y_column))
+    }
+    
     
     # Making the second data frame
     data2_filtered <- data.frame(
       x_data <- data1$data[,input$x_column2],
       y_data <- data1$data[,input$y_column]
     )
-
-    # Renaming the x column and getting rid of NAs
-    data2_filtered <- data2_filtered %>%
-      rename(x_data = input$x_column2) %>%
-      rename(y_data = paste0(input$y_column,".1")) 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    # Doesn't like when the columns are named the same thing
+    if(input$x_column2 == input$y_column){
+      # Renaming the x column and getting rid of NAs
+      data2_filtered <- data2_filtered %>%
+        rename(x_data = input$x_column2) %>%
+        rename(y_data = paste0(input$y_column,".1")) 
+    } else{
+      # Renaming the x column and getting rid of NAs
+      data2_filtered <- data2_filtered %>%
+        rename(x_data = input$x_column2) %>%
+        rename(y_data = paste0(input$y_column))
+    }
     
 
     # Adding types for the titles
@@ -326,6 +357,14 @@ shinyServer(function(input, output, session) {
     req(data1$data)
     req(input$y_column)
     req(input$x_column)
+    
+    # Observing for when they change
+    observe({
+      input$x_column
+      input$y_column
+      input$x_column2
+      input$color_data
+    })
     
     
     print(paste0("X_Column: ",input$x_column))
