@@ -2,33 +2,7 @@ shinyUI(fluidPage(
   
   # Application title
   titlePanel("Interactive Graphs"),
-  
-  
-  # tags$head(
-  #   tags$script(HTML(
-  #     "
-  #     $(document).ready(function() {
-  #       // Function to calculate the width of selectInput based on the length of the options
-  #       function setSelectInputWidth(inputId) {
-  #         var maxWidth = 0;
-  #         $('#' + inputId + ' option').each(function() {
-  #           var width = $(this).text().length * 8; // Adjust multiplier for proper scaling
-  #           maxWidth = Math.max(maxWidth, width);
-  #         });
-  #         $('#' + inputId).css('width', maxWidth + 'px');
-  #       }
-  # 
-  #       // Call the function for each selectInput on initial load
-  #       setSelectInputWidth('x_column');
-  # 
-  #       // Call the function whenever the options change
-  #       $('#x_column').change(function() {
-  #         setSelectInputWidth('x_column');
-  #       });
-  #     });
-  #     "
-  #   ))
-  # ),
+    
   
   
   # Sidebar with a file input and select input
@@ -47,8 +21,22 @@ shinyUI(fluidPage(
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot")),
                  
-
-        
+                 conditionalPanel(
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
+                   # Selecting which item you want for each column
+                   selectInput("y_column", label = "Y Data",
+                               choices = list("")),
+                 ),
+                 
+                 selectInput("x_column", label = "X Data",
+                             choices = list("")),
+                
+                 conditionalPanel(
+                   condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
+                   # Selecting which item you want for each column of the second set
+                   selectInput("x_column2", label = "X Data (Second Set)",
+                               choices = list("")),
+                 ),
                  
                  
                  
@@ -84,21 +72,9 @@ shinyUI(fluidPage(
                      ),
                    ),
                    
-                   
 
-                   # Selecting which item you want for each column
-                   selectInput("y_column", label = "Y Data",
-                               choices = list("")),
-                   selectInput("x_column", label = "X Data",
-                               choices = list("")),
                    
                    
-                   conditionalPanel(
-                     condition = "input.plotType == 'Multiple Scatterplot'",
-                     # Selecting which item you want for each column of the second set
-                     selectInput("x_column2", label = "X Data (Second Set)",
-                                 choices = list("")),
-                   ),
                    
             
   
@@ -112,6 +88,37 @@ shinyUI(fluidPage(
                      checkboxInput("regression_se", "Confidence Interval", value = FALSE),
                    ),
                  ),
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 
+                 #################################################################
+                 # Boxplot
+                 conditionalPanel(
+                   condition = "input.plotType == 'Boxplot'",
+                 
+                   checkboxInput("boxplot_individual_points_bool", "Individual Points", value = FALSE),
+                   checkboxInput("boxplot_mean_bool", "Mean", value = FALSE),
+                   
+                  
+                 )
                  
                 
                 
@@ -158,11 +165,12 @@ shinyUI(fluidPage(
                  # Normal Scatterplot
                  # Panel for Scatterplot Settings
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot' " ,
                    
                    # Checkbox for gridlines
                    checkboxInput("gridlines", "Show Major Gridlines", value = TRUE),
                    checkboxInput("minor_gridlines", "Show Minor Gridlines", value = TRUE),
+                   checkboxInput("outline_boolean", "Show Plot Outline", value = TRUE),
                    
                    # Color picker for gridline color
                    # Conditional panel for showing the color option for the gridlines
@@ -174,6 +182,10 @@ shinyUI(fluidPage(
                      condition = "input.minor_gridlines",
                      colourInput("minor_gridline_color", "Minor Gridline Color", value = "white"),
                      ),
+                   
+                   
+                   # Select inputs for outline color and width
+                   colourInput("outline_color", "Outline Color", "black"),
                   
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
@@ -184,7 +196,7 @@ shinyUI(fluidPage(
                    
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
-                     condition = "input.plotType == 'Multiple Scatterplot'",
+                     condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                      colourInput("point_color1", "Set Color 1", value = "blue"),
                      colourInput("point_color2", "Set Color 2", value = "red"),
                    ),
@@ -201,7 +213,7 @@ shinyUI(fluidPage(
                    ),
                  # Panel for the axes hiding
                   conditionalPanel(
-                   condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot'",
+                   condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot' || ipnut.plotType = 'Boxplot'",
                    colourInput("legend_background", "Legend Background Color", value = "white")
                   ),
                  ),
@@ -240,7 +252,7 @@ shinyUI(fluidPage(
                  # Normal Scatterplot
                  # Allowing them to override the plotting
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                    checkboxInput("override_axes", label = "Override Axes", value = FALSE),
                    # Only having these pop up if the box is checked
                    conditionalPanel(
@@ -259,13 +271,13 @@ shinyUI(fluidPage(
                    
                    # Panel for the axes hiding
                    conditionalPanel(
-                     condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
+                     condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                      textInput("legend_title", label = "Legend Title", value = "Legend"),
                    ),
                    
                    # Panel for changing the names of the conditions
                    conditionalPanel(
-                     condition = "input.plotType == 'Multiple Scatterplot'",
+                     condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                      textInput("multiple_condition_title1", label = "Condition 1", value = ""),
                      textInput("multiple_condition_title2", label = "Condition 2", value = ""),
                    ),

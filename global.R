@@ -10,6 +10,10 @@ library(readxl)
 library(xtable)
 library(shinyWidgets)
 library(colourpicker)
+library(reshape2)
+library(hrbrthemes)
+library(viridis)
+library(ggthemes)
 # data prep
 
 # source: https://www.kaggle.com/datasets/muhammadkhalid/most-popular-programming-languages-since-2004
