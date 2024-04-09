@@ -130,7 +130,8 @@ shinyServer(function(input, output, session) {
         scale_color_continuous(low = input$data_color1, high = input$data_color2)+
         geom_point(size = input$point_size) +
         labs(x = x, y = y, title = input$plot_title) +
-        theme(legend.background = element_rect(fill = input$legend_background))
+        theme(legend.background = element_rect(fill = input$legend_background),
+              text = element_text(family = "Arial"))
     }
     
     
@@ -165,7 +166,6 @@ shinyServer(function(input, output, session) {
         axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
         axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
         axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
-        text = element_text(family = "Arial"),
         # legend.title = element_text(input$legend_title)
         # panel.border = element_rect(color = "black",size = 1)  # Border around the plot
       ) 
@@ -592,7 +592,8 @@ shinyServer(function(input, output, session) {
 
       scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend) +
       # scale_fill_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
-      theme(legend.background = element_rect(fill = input$legend_background)) +
+      theme(legend.background = element_rect(fill = input$legend_background),
+            text = element_text(family = "Times New Roman")) +
       labs(x = x, y = y) 
 
     
@@ -630,7 +631,7 @@ shinyServer(function(input, output, session) {
         axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
         axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
         axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
-        text = element_text(family = "Arial"),
+        text = element_text(family = "Times New Roman"),
         # legend.title = element_text(input$legend_title)
         # plot.border = element_rect(color = "black",size = 1)  # Border around the plot
       ) +
