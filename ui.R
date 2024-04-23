@@ -19,7 +19,8 @@ shinyUI(fluidPage(
                   
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
-                              choices = c("Scatterplot","Multiple Scatterplot","Boxplot")),
+                              choices = c("Scatterplot","Multiple Scatterplot","Boxplot"),
+                             selected = "Multiple Scatterplot"),
                  
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
@@ -36,18 +37,15 @@ shinyUI(fluidPage(
                    # Selecting which item you want for each column of the second set
                    selectInput("x_column2", label = "X Data (Second Set)",
                                choices = list("")),
+                   
+                   selectInput("multiple_color", label = "Color or Shapes",
+                               choices = list("Color","Shapes"),
+                               selected = "Shapes"),
                  ),
                  
                  
                  
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
+
                  ###############################################################
                  # Scatterplots
                  # Checkbox for whether or not it is a scatterplot
@@ -72,7 +70,8 @@ shinyUI(fluidPage(
                      ),
                    ),
                    
-
+                   
+                   
                    
                    
                    
@@ -90,24 +89,7 @@ shinyUI(fluidPage(
                  ),
                  
                  
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
+
                  
                  #################################################################
                  # Boxplot
@@ -119,46 +101,89 @@ shinyUI(fluidPage(
                    
                   
                  )
-                 
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-
-                 
-                  
-                  
         ),
         
-        # Tab 2: Exporting Data
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        # Tab 2: Plot Settings
         tabPanel("Plot Settings",
                  # Select inputs for the points on the plot
                  # Select point size
                  sliderInput("point_size", "Point Size", value = 1, min = 0.01, max = 5),
+                 
+                 # Checkbox for gridlines
+                 checkboxInput("gridlines", "Show Major Gridlines", value = TRUE),
+                 checkboxInput("minor_gridlines", "Show Minor Gridlines", value = TRUE),
+                 checkboxInput("outline_boolean", "Show Plot Outline", value = TRUE),
+                 
+                 
+                 # Overriding Axes
+                 checkboxInput("override_axes", label = "Axes Slider Adjust", value = FALSE),
+                 # Allowing the participant to crop the graph if they want to
+                 conditionalPanel(
+                   condition = "input.override_axes",
+                   # Input for x_axis
+                   sliderInput("override_x", "X Axis Range", min = 0, max = 7000, value = c(0,100),step = 0.01),
+                   # Input for y_axis
+                   sliderInput("override_y", "Y Axis Range", min = 0, max = 7000, value = c(0,100), step = 0.01),
+                 ),
+                 
+                 conditionalPanel(
+                   condition = "!input.override_axes",
+                   # Allowing for integer inputs for the range of the inputs
+                   numericInput("x_axis_min", "X Min",value = 0),
+                   numericInput("x_axis_max", "X Max",value = 0),
+                   numericInput("y_axis_min", "Y Min",value = 0),
+                   numericInput("y_axis_max", "Y Max",value = 0),
+                   
+                 ),
+                 
+                 
+                 
+
+                 
+                 # Select axes size
+                 sliderInput("axes_size", "Axes Size", value = 15, min = 1, max = 30),
+                 # Select numbers size
+                 sliderInput("num_size", "Number Size", value = 10, min = 1, max = 30),
+                 
+                 
+        ),
+        
+        
+        
+        
+        
+        
+        
+        
+        tabPanel("Color",
+                 
+                 
                  # Select point color
                  conditionalPanel(
                    condition = "!input.color_boolean && input.plotType == 'Scatterplot'",
                    colourInput("point_color", "Point Color", "black")
                  ),
                  
-                 colourInput("background_color", "Background Color", "lightgrey"),
-                 colourInput("panel_color", "Panel Color", "grey"),
+                 colourInput("background_color", "Background Color", "gray"),
+                 colourInput("panel_color", "Panel Color", "lightgray"),
                  # colourInput("border_color", "Border Color", "white"),
                  
                  
                  
-                 
-            
                  
                  
                  ###############################################################
@@ -167,26 +192,23 @@ shinyUI(fluidPage(
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot' " ,
                    
-                   # Checkbox for gridlines
-                   checkboxInput("gridlines", "Show Major Gridlines", value = TRUE),
-                   checkboxInput("minor_gridlines", "Show Minor Gridlines", value = TRUE),
-                   checkboxInput("outline_boolean", "Show Plot Outline", value = TRUE),
+                   
                    
                    # Color picker for gridline color
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
-                      condition = "input.gridlines",
-                      colourInput("major_gridline_color", "Major Gridline Color", value = "white"),
-                      ),
+                     condition = "input.gridlines",
+                     colourInput("major_gridline_color", "Major Gridline Color", value = "black"),
+                   ),
                    conditionalPanel(
                      condition = "input.minor_gridlines",
-                     colourInput("minor_gridline_color", "Minor Gridline Color", value = "white"),
-                     ),
+                     colourInput("minor_gridline_color", "Minor Gridline Color", value = "black"),
+                   ),
                    
                    
                    # Select inputs for outline color and width
                    colourInput("outline_color", "Outline Color", "black"),
-                  
+                   
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
                      condition = "input.color_boolean && input.plotType == 'Scatterplot'",
@@ -211,109 +233,66 @@ shinyUI(fluidPage(
                        colourInput("regression_color_multiple", "Regression Color (Set 2)", value = "red"),
                      )
                    ),
-                 # Panel for the axes hiding
-                  conditionalPanel(
-                   condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot' || ipnut.plotType = 'Boxplot'",
-                   colourInput("legend_background", "Legend Background Color", value = "white")
-                  ),
-                 ),
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 ################################################################
-                 # Dual Scatterplot
-                 
-                  
-          
+                   # Panel for the axes hiding
+                   conditionalPanel(
+                     condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot' || ipnut.plotType = 'Boxplot'",
+                     colourInput("legend_background", "Legend Background Color", value = "white")
+                   ),
+                 )
         ),
         
-        tabPanel("Axes/Labels",
-                 
-                 
-                 
-                 
-                 
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        tabPanel("Labels",
+
                  ##############################################################
                  # Normal Scatterplot
                  # Allowing them to override the plotting
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                   checkboxInput("override_axes", label = "Override Axes", value = FALSE),
-                   # Only having these pop up if the box is checked
-                   conditionalPanel(
-                     condition = "input.override_axes",
-                     # Input for x_axis
-                     sliderInput("override_x", "X Axis Range", min = 0, max = 7000, value = c(0,6000)),
-                     # Input for y_axis
-                     sliderInput("override_y", "Y Axis Range", min = 0, max = 7000, value = c(0,6000)),
-                   ),
                    
+                   selectInput("Font", label = "Font",
+                               choices = list("Arial", "Times New Roman"), selected = "Arial"),
                    
                    # Input for axes and title labels
                    textInput("plot_title", label = "Plot Title", value = "Plot"),
                    textInput("x_title", label = "X Axis Title", value = ""),
                    textInput("y_title", label = "Y Axis Title", value = ""),
-                   
+
                    # Panel for the axes hiding
                    conditionalPanel(
                      condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                      textInput("legend_title", label = "Legend Title", value = "Legend"),
                    ),
-                   
+
                    # Panel for changing the names of the conditions
                    conditionalPanel(
                      condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                      textInput("multiple_condition_title1", label = "Condition 1", value = ""),
                      textInput("multiple_condition_title2", label = "Condition 2", value = ""),
                    ),
+
+
                    
-                   
-                   # Select axes size
-                   sliderInput("axes_size", "Axes Size", value = 15, min = 1, max = 30),
-                   # Select numbers size
-                   sliderInput("num_size", "Number Size", value = 10, min = 1, max = 30),
                  )
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 
-                 ################################################################
-                 # Dual Scatterplot
-                 
-                 
-                 
-                 
-          
         ),
+        
+        
+        
+        
         
         
         
