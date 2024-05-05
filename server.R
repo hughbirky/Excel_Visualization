@@ -48,7 +48,9 @@ shinyServer(function(input, output, session) {
   
   
   
-  
+  observeEvent(input$plotType,{
+    print(input$plotType)
+  })
   
   
   # Update ranges everytime these change for the x axis

@@ -19,11 +19,11 @@ shinyUI(fluidPage(
                   
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
-                              choices = c("Scatterplot","Multiple Scatterplot","Boxplot"),
+                              choices = c("Scatterplot","Multiple Scatterplot","Boxplot", "Facet Grid"),
                              selected = "Multiple Scatterplot"),
                  
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || ipnut.plotType == 'Facet Grid'",
                    # Selecting which item you want for each column
                    selectInput("y_column", label = "Y Data",
                                choices = list("")),
@@ -33,7 +33,7 @@ shinyUI(fluidPage(
                              choices = list("")),
                 
                  conditionalPanel(
-                   condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
+                   condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot' || ipnut.plotType == 'Facet Grid'",
                    # Selecting which item you want for each column of the second set
                    selectInput("x_column2", label = "X Data (Second Set)",
                                choices = list("")),
@@ -50,7 +50,7 @@ shinyUI(fluidPage(
                  # Scatterplots
                  # Checkbox for whether or not it is a scatterplot
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || ipnut.plotType == 'Facet Grid'",
                    
                    # Checkbox for regression or not
                    checkboxInput("regression_boolean", "Regression", value = FALSE),
@@ -132,23 +132,26 @@ shinyUI(fluidPage(
                  # Overriding Axes
                  checkboxInput("override_axes", label = "Axes Slider Adjust", value = FALSE),
                  # Allowing the participant to crop the graph if they want to
-                 conditionalPanel(
-                   condition = "input.override_axes",
-                   # Input for x_axis
-                   sliderInput("override_x", "X Axis Range", min = 0, max = 7000, value = c(0,100),step = 0.01),
-                   # Input for y_axis
-                   sliderInput("override_y", "Y Axis Range", min = 0, max = 7000, value = c(0,100), step = 0.01),
-                 ),
+                 # conditionalPanel(
+                 #   condition = "input.override_axes",
+                 #   # Input for x_axis
+                 #   sliderInput("override_x", "X Axis Range", min = 0, max = 7000, value = c(0,100),step = 0.01),
+                 #   # Input for y_axis
+                 #   sliderInput("override_y", "Y Axis Range", min = 0, max = 7000, value = c(0,100), step = 0.01),
+                 # ),
                  
-                 conditionalPanel(
-                   condition = "!input.override_axes",
-                   # Allowing for integer inputs for the range of the inputs
-                   numericInput("x_axis_min", "X Min",value = 0),
-                   numericInput("x_axis_max", "X Max",value = 0),
-                   numericInput("y_axis_min", "Y Min",value = 0),
-                   numericInput("y_axis_max", "Y Max",value = 0),
-                   
-                 ),
+
+                 # Allowing for integer inputs for the range of the inputs
+                 numericInput("y_axis_min", "Y Min",value = 0),
+                 numericInput("y_axis_max", "Y Max",value = 0),
+                 numericInput("x_axis_min", "X Min",value = 0),
+                 numericInput("x_axis_max", "X Max",value = 0),
+                 
+
+                 # Selecting which item you want for each column of the second set
+                 numericInput("x1_axis_min", "X1 Min",value = 0),
+                 numericInput("x1_axis_max", "X1 Max",value = 0),
+            
                  
                  
                  
