@@ -23,17 +23,23 @@ shinyUI(fluidPage(
                              selected = "Multiple Scatterplot"),
                  
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || ipnut.plotType == 'Facet Grid'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
                    # Selecting which item you want for each column
                    selectInput("y_column", label = "Y Data",
                                choices = list("")),
                  ),
                  
-                 selectInput("x_column", label = "X Data",
-                             choices = list("")),
+                 
+                 conditionalPanel(
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
+                   # Selecting which item you want for each column
+                   selectInput("x_column", label = "X Data",
+                               choices = list("")),
+                 ),
+                 
                 
                  conditionalPanel(
-                   condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot' || ipnut.plotType == 'Facet Grid'",
+                   condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                    # Selecting which item you want for each column of the second set
                    selectInput("x_column2", label = "X Data (Second Set)",
                                choices = list("")),
@@ -43,6 +49,23 @@ shinyUI(fluidPage(
                                selected = "Shapes"),
                  ),
                  
+                 conditionalPanel(
+                   condition = "input.plotType == 'Facet Grid'",
+                   
+                   # Making the select nodes for Facet Grid
+                   selectInput("y_condition_1", label = "Y Data (First Set)",
+                               choices = list("")),
+                   selectInput("y_condition_2", label = "Y Data (Second Set)",
+                               choices = list("")),
+                   
+                   selectInput("x_condition_1", label = "X Data (First Set)",
+                               choices = list("")),
+                   selectInput("x_condition_2", label = "X Data (Second Set)",
+                               choices = list("")),
+                 ),
+                 
+                 
+                 
                  
                  
 
@@ -50,7 +73,7 @@ shinyUI(fluidPage(
                  # Scatterplots
                  # Checkbox for whether or not it is a scatterplot
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || ipnut.plotType == 'Facet Grid'",
+                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Facet Grid'",
                    
                    # Checkbox for regression or not
                    checkboxInput("regression_boolean", "Regression", value = FALSE),
@@ -238,7 +261,7 @@ shinyUI(fluidPage(
                    ),
                    # Panel for the axes hiding
                    conditionalPanel(
-                     condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot' || ipnut.plotType = 'Boxplot'",
+                     condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot' || input.plotType = 'Boxplot'",
                      colourInput("legend_background", "Legend Background Color", value = "white")
                    ),
                  )
@@ -287,6 +310,8 @@ shinyUI(fluidPage(
                      textInput("multiple_condition_title1", label = "Condition 1", value = ""),
                      textInput("multiple_condition_title2", label = "Condition 2", value = ""),
                    ),
+                   
+                   
 
 
                    
