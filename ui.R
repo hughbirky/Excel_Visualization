@@ -20,7 +20,7 @@ shinyUI(fluidPage(
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot", "Facet Grid"),
-                             selected = "Multiple Scatterplot"),
+                             selected = "Boxplot"),
                  
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
@@ -119,8 +119,8 @@ shinyUI(fluidPage(
                  conditionalPanel(
                    condition = "input.plotType == 'Boxplot'",
                  
-                   checkboxInput("boxplot_individual_points_bool", "Individual Points", value = FALSE),
-                   checkboxInput("boxplot_mean_bool", "Mean", value = FALSE),
+                   checkboxInput("boxplot_individual_points_bool", "Individual Points", value = T),
+                   checkboxInput("boxplot_mean_bool", "Mean", value = T),
                    
                   
                  )
@@ -147,9 +147,9 @@ shinyUI(fluidPage(
                  sliderInput("point_size", "Point Size", value = 1, min = 0.01, max = 5),
                  
                  # Checkbox for gridlines
-                 checkboxInput("gridlines", "Show Major Gridlines", value = TRUE),
-                 checkboxInput("minor_gridlines", "Show Minor Gridlines", value = TRUE),
-                 checkboxInput("outline_boolean", "Show Plot Outline", value = TRUE),
+                 checkboxInput("gridlines", "Show Major Gridlines", value = F),
+                 checkboxInput("minor_gridlines", "Show Minor Gridlines", value = F),
+                 checkboxInput("outline_boolean", "Show Plot Outline", value = T),
                  
                  
                  # Overriding Axes
@@ -204,8 +204,8 @@ shinyUI(fluidPage(
                    colourInput("point_color", "Point Color", "black")
                  ),
                  
-                 colourInput("background_color", "Background Color", "gray"),
-                 colourInput("panel_color", "Panel Color", "lightgray"),
+                 colourInput("background_color", "Background Color", "white"),
+                 colourInput("panel_color", "Panel Color", "white"),
                  # colourInput("border_color", "Border Color", "white"),
                  
                  
@@ -245,8 +245,8 @@ shinyUI(fluidPage(
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
                      condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                     colourInput("point_color1", "Set Color 1", value = "blue"),
-                     colourInput("point_color2", "Set Color 2", value = "red"),
+                     colourInput("point_color1", "Set Color 1", value = "white"),
+                     colourInput("point_color2", "Set Color 2", value = "lightgrey"),
                    ),
                    
                    # Conditional panel for showing the color option for the regression line
@@ -294,7 +294,7 @@ shinyUI(fluidPage(
                                choices = list("Arial", "Times New Roman"), selected = "Arial"),
                    
                    # Input for axes and title labels
-                   textInput("plot_title", label = "Plot Title", value = "Plot"),
+                   textInput("plot_title", label = "Plot Title", value = ""),
                    textInput("x_title", label = "X Axis Title", value = ""),
                    textInput("y_title", label = "Y Axis Title", value = ""),
 
