@@ -20,7 +20,7 @@ shinyUI(fluidPage(
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot", "Facet Grid"),
-                             selected = "Boxplot"),
+                             selected = "Scatterplot"),
                  
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
@@ -151,6 +151,9 @@ shinyUI(fluidPage(
                  checkboxInput("minor_gridlines", "Show Minor Gridlines", value = F),
                  checkboxInput("outline_boolean", "Show Plot Outline", value = T),
                  
+                 selectInput("legend_position", label = "Legend Position",
+                             choices = list("normal","none","top","bottom"), selected = "normal"),
+                 
                  
                  # Overriding Axes
                  checkboxInput("override_axes", label = "Axes Slider Adjust", value = FALSE),
@@ -252,7 +255,7 @@ shinyUI(fluidPage(
                    # Conditional panel for showing the color option for the regression line
                    conditionalPanel(
                      condition = "input.regression_boolean && input.plotType == 'Scatterplot'",
-                     colourInput("regression_color", "Regression Color", value = "blue"),
+                     colourInput("regression_color", "Regression Color", value = "black"),
                      
                      conditionalPanel(
                        condition = "input.plotType = 'Multiple Scatterplot'",
@@ -301,7 +304,7 @@ shinyUI(fluidPage(
                    # Panel for the axes hiding
                    conditionalPanel(
                      condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                     textInput("legend_title", label = "Legend Title", value = "Legend"),
+                     textInput("legend_title", label = "Legend Title", value = ""),
                    ),
 
                    # Panel for changing the names of the conditions

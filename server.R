@@ -19,42 +19,14 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
     updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    updateTextInput(session, "multiple_condition_title1", value = "AO")
-    updateTextInput(session, "multiple_condition_title2", value = "AT")
-    updateTextInput(session, "x_title", value = "Orthographic Condition")
+
+    ######################################################################################################
+    ######################################################################################################
+    # In case you want to make multiple that quickly update between and don't have to change every time
+    # updateTextInput(session, "multiple_condition_title1", value = "AO")
+    # updateTextInput(session, "multiple_condition_title2", value = "AT")
+    # updateTextInput(session, "x_title", value = "Orthographic Condition")
     # updateTextInput(session, "x_title", value = " ")
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
     
     
     # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "Z_withinpart_AO")
@@ -89,19 +61,14 @@ shinyServer(function(input, output, session) {
     # updateNumericInput(session, "y_axis_max", value = 1)
     
     
-    updateSelectInput(session, "x_column", choices = names(data1$data), selected = "FA_AT_Rat")
-    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "FA_AT_Rat1_A")
-    updateTextInput(session, "y_title", value = "Confidence Ratings")
-    updateNumericInput(session, "y_axis_min", value = 0)
-    updateNumericInput(session, "y_axis_max", value = 100)
-    
-
-    
+    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "FA_AT_Rat")
+    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "FA_AT_Rat1_A")
+    # updateTextInput(session, "y_title", value = "Confidence Ratings")
+    # updateNumericInput(session, "y_axis_min", value = 0)
+    # updateNumericInput(session, "y_axis_max", value = 100)
   })
   
-  
-  
-  
+
   observeEvent(input$color_boolean, {
     # This requires the file to exist before executing
     req(input$file1)
@@ -115,7 +82,6 @@ shinyServer(function(input, output, session) {
   })
   
   
-  
   # Checking to see if any of the values have changed
   toListenX <- reactive({
     list(input$x_column,input$x_column2)
@@ -125,74 +91,54 @@ shinyServer(function(input, output, session) {
   })
   
   
-  
-  # observeEvent(input$plotType,{
-  #   print(input$plotType)
-  # })
-  # 
-  
-  # Update ranges everytime these change for the x axis
-  # observeEvent(toListenX(), {
-  #   
-  #     req(data1$data)  # Ensure data is available
-  #     req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-  #     x_max1 <- vector(length = 2)
-  #     x_min1 <- vector(length = 2)
-  #     
-  #     # Filtering Data
-  #     data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-  #     
-  #     
-  #     # Finding the min and max of the x and y columns
-  #     x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
-  #     x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
-  #     x_max <- max(x_max1)
-  #     x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
-  #     x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
-  #     x_min <- min(x_min1)
-  # 
-  #     
-  #     
-  #     updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
-  #     updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
-  #     updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
-  # })
-  
-  
-  
-  
-  
-  # # Update ranges everytime these change for the y axis
-  # observeEvent(toListenY(), {
-  #   
-  #     req(data1$data)  # Ensure data is available
-  #     req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-  #     
-  #     # Filtering Data
-  #     data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-  #     
-  #     
-  #     # Finding the min and max of the x and y column
-  #     y_max <- max(data1[[input$y_column]], na.rm = TRUE)
-  #     y_min <- min(data1[[input$y_column]], na.rm = TRUE)
-  #     
-  #     
-  # 
-  #     updateNumericInput(session = session, inputId = "y_axis_min", value = y_min)
-  #     updateNumericInput(session = session, inputId = "y_axis_max", value = y_max)
-  #     updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
-  # })
+  # Update ranges every time these change for the x axis
+  observeEvent(toListenX(), {
 
+      req(data1$data)  # Ensure data is available
+      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+      x_max1 <- vector(length = 2)
+      x_min1 <- vector(length = 2)
+
+      # Filtering Data
+      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+
+
+      # Finding the min and max of the x and y columns
+      x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
+      x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
+      x_max <- max(x_max1)
+      x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
+      x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
+      x_min <- min(x_min1)
+
+
+
+      updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
+      updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
+      updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
+  })
   
   
-  
-  
-  
-  
-  
-  
-  
-  
+  # Update ranges everytime these change for the y axis
+  observeEvent(toListenY(), {
+
+      req(data1$data)  # Ensure data is available
+      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+
+      # Filtering Data
+      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+
+
+      # Finding the min and max of the x and y column
+      y_max <- max(data1[[input$y_column]], na.rm = TRUE)
+      y_min <- min(data1[[input$y_column]], na.rm = TRUE)
+
+
+
+      updateNumericInput(session = session, inputId = "y_axis_min", value = y_min)
+      updateNumericInput(session = session, inputId = "y_axis_max", value = y_max)
+      updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
+  })
   
   
   #########################################################################
@@ -235,6 +181,7 @@ shinyServer(function(input, output, session) {
       data_filtered <-na.omit(data_filtered)
       # Plotting when no color included
       plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
+        # Adding in the scatterplot with the color and size variable
         geom_point(size = input$point_size, color = input$point_color) +
         theme(legend.background = element_rect(fill = input$legend_background),
               text = element_text(family = input$Font)) +
@@ -257,12 +204,14 @@ shinyServer(function(input, output, session) {
         # Labels the axes and title
         labs(x = x, y = y, title = input$plot_title) +
         theme(legend.background = element_rect(fill = input$legend_background),
-              text = element_text(family = input$Font)) 
+              text = element_text(family = input$Font),
+              ) 
+      
+      # Adjusting the position of the legend
+      if(input$legend_position != "normal"){
+        plot <- plot + theme(legend.position = input$legend_position)
+      }
     }
-    
-    
-    
-    
     
     
     # Adding a regression line
@@ -279,6 +228,7 @@ shinyServer(function(input, output, session) {
       
     }
     
+    
     # Adding an outline or not
     if(input$outline_boolean){
       # Add outline to the plot
@@ -294,50 +244,37 @@ shinyServer(function(input, output, session) {
         axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
         axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
         axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
+        plot.background = element_rect(fill = input$background_color),
+        panel.background = element_rect(fill = input$panel_color),
       ) 
-    
-    
-    
-    
-    
-    
-    
     
     # Plotting in case there are gridlines
     if (input$gridlines && input$minor_gridlines) {
        plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_line(color = input$major_gridline_color),
-              panel.grid.minor = element_line(color = input$minor_gridline_color)
-              )
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
+              panel.grid.minor = element_line(color = input$minor_gridline_color))
       # Condition where you only want minor gridlines
     } else if(!input$gridlines && input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_blank(),
-              panel.grid.minor = element_line(color = input$minor_gridline_color)
-              )
+        theme(panel.grid.major = element_blank(),
+              panel.grid.minor = element_line(color = input$minor_gridline_color))
       # Condition where you only want major gridlines
     } else if(input$gridlines && !input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_line(color = input$major_gridline_color),
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_blank())
       # Condition where you want neither
     } else if(!input$gridlines && !input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_blank(),
+        theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())
     }
+    
+    
+    
   }
 
  
-  
   #########################################################################
   #########################################################################
   # Multiple Scatterplot function
@@ -368,17 +305,12 @@ shinyServer(function(input, output, session) {
     }
     
     
-    
     # Making the first data frame to hold the info from the first item
     data1_filtered <- data.frame(
       x_data <- data1$data[,input$x_column],
       y_data <- data1$data[,input$y_column]
       )
-    
-
-    
-    
-    
+  
     
     # Doesn't like when the columns are named the same thing
     if(input$x_column == input$y_column){
@@ -400,15 +332,7 @@ shinyServer(function(input, output, session) {
       y_data <- data1$data[,input$y_column]
     )
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+  
     # Doesn't like when the columns are named the same thing
     if(input$x_column2 == input$y_column){
       # Renaming the x column and getting rid of NAs
@@ -436,22 +360,10 @@ shinyServer(function(input, output, session) {
     }
 
     
-
-    
-    
-  
-    
     # Combining the data frames
     combined_data <- rbind(data1_filtered,data2_filtered)
     
-    
-    
-    
-    
-    
-    
-    
-    
+
     # Baseline plot for all the stuff needed for all conditions SHAPE ONLY
     if(input$multiple_color == "Shapes"){
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, lty = type)) +
@@ -460,15 +372,12 @@ shinyServer(function(input, output, session) {
         # scale_shape_manual(values = c(5,16))+
         labs(x = x, y = y, title = input$plot_title) +
         theme(legend.background = element_rect(fill = input$legend_background),
-              text = element_text(family = input$Font)) +
-        theme(panel.border = element_rect(color = input$outline_color),
+              text = element_text(family = input$Font),
+              panel.border = element_rect(color = input$outline_color),
               legend.background = element_rect(fill = input$legend_background))
     }
     
-    
-    
-    
-    
+
     # Baseline plot for all the stuff needed for all conditions COLOR ONLY
     if(input$multiple_color == "Color"){
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
@@ -477,26 +386,20 @@ shinyServer(function(input, output, session) {
         labs(x = x, y = y, title = input$plot_title) +
         scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
         theme(legend.background = element_rect(fill = input$legend_background),
-              text = element_text(family = input$Font)) +
-        theme(panel.border = element_rect(color = input$outline_color),
-              legend.background = element_rect(fill = input$legend_background))
+              text = element_text(family = input$Font),
+              panel.border = element_rect(color = input$outline_color),
+              legend.background = element_rect(fill = input$legend_background),
+              plot.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color))
     }
-    
-    
-    
-    
-    
-    
     
     
     # Adding a regression line
     if(input$regression_boolean){
       plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se)
-      # plot <- plot + geom_smooth(method = input$regression_method, color = aes(color = type), se = input$regression_se, fill = aes(color = type))
-      # plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
-      
     }
       
+    
     # Overriding axes bound
     if(input$override_axes){
       plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
@@ -504,6 +407,7 @@ shinyServer(function(input, output, session) {
       plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
       print(paste0(input$y_axis_min,input$y_axis_max))
     }
+    
     
     # Adding an outline or not
     if(input$outline_boolean){
@@ -524,49 +428,33 @@ shinyServer(function(input, output, session) {
         axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
       ) 
     
-    
   
-    
-    
     # Plotting in case there are gridlines
     if (input$gridlines && input$minor_gridlines) {
        plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_line(color = input$major_gridline_color),
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_line(color = input$minor_gridline_color)
               )
       # Condition where you only want minor gridlines
     } else if(!input$gridlines && input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_blank(),
+        theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_line(color = input$minor_gridline_color)
               )
       # Condition where you only want major gridlines
     } else if(input$gridlines && !input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_line(color = input$major_gridline_color),
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_blank())
       # Condition where you want neither
     } else if(!input$gridlines && !input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_blank(),
+        theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())
     }
-    
-    
-    
-    
   }
   
 
-  
   #########################################################################
   #########################################################################
   # Boxplot function
@@ -597,18 +485,13 @@ shinyServer(function(input, output, session) {
     }
     
     
-    
     # Making the first data frame to hold the info from the first item
     data1_filtered <- data.frame(
       x_data <- data1$data[,input$x_column],
       y_data <- data1$data[,input$y_column]
     )
     
-    
-    
-    
-    
-    
+
     # Doesn't like when the columns are named the same thing
     if(input$x_column == input$y_column){
       # Renaming the x column and getting rid of NAs
@@ -629,15 +512,7 @@ shinyServer(function(input, output, session) {
       y_data <- data1$data[,input$y_column]
     )
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
+
     # Doesn't like when the columns are named the same thing
     
     if(input$x_column2 == input$y_column){
@@ -666,11 +541,6 @@ shinyServer(function(input, output, session) {
     }
     
     
-    
-    
-    
-    
-    
     # Combining the data frames
     combined_data <- rbind(data1_filtered,data2_filtered)
     
@@ -684,14 +554,14 @@ shinyServer(function(input, output, session) {
     plot <- ggplot(combined_data, aes(x = type, y = x_data, fill = type)) +
 
       geom_boxplot(outlier.shape = boxplot_outlier_shape) +
-
       scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend) +
-      # scale_fill_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
       theme(legend.position = "none",
             legend.background = element_rect(fill = input$legend_background),
-            text = element_text(family = input$Font)) +
-      labs(x = x, y = y) +
-      coord_cartesian(ylim = c(input$y_axis_min,input$y_axis_max)) 
+            text = element_text(family = input$Font),
+            plot.background = element_rect(fill = input$background_color),
+            panel.background = element_rect(fill = input$panel_color)) +
+      labs(x = x, y = y) + 
+      coord_cartesian(ylim = c(input$y_axis_min,input$y_axis_max))
       
 
     
@@ -701,22 +571,20 @@ shinyServer(function(input, output, session) {
       plot <- plot + geom_jitter(color="black", size=2.5, alpha=0.9,height = 0,width = 0.25,shape = 1,stroke = 1)
     } 
     
+    
     # Adding an outline or not
     if(input$outline_boolean){
       # Add outline to the plot
       plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))
     } 
     
+    
     # Adding a mean point
     if(input$boxplot_mean_bool){
       # Add outline to the plot
       plot <- plot + stat_summary(fun = mean, geom="point", shape=8, size=4, color="black", fill="black",stroke = 2)  # Add star for mean
     } 
-    
-    
-    
-    
-    
+
     
     # Plotting Data
     plot +
@@ -733,343 +601,39 @@ shinyServer(function(input, output, session) {
       ylab(y) + 
       labs(legend = legend)+
       scale_x_discrete(labels = c("A","B")) 
-      # labs(x = x, y = y, title = input$plot_title, colour = legend)
-    
-      
-    
     
     
     # Plotting in case there are gridlines
     if (input$gridlines && input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_line(color = input$major_gridline_color),
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_line(color = input$minor_gridline_color)
         )
       # Condition where you only want minor gridlines
     } else if(!input$gridlines && input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_blank(),
+        theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_line(color = input$minor_gridline_color)
         )
       # Condition where you only want major gridlines
     } else if(input$gridlines && !input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_line(color = input$major_gridline_color),
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_blank())
       # Condition where you want neither
     } else if(!input$gridlines && !input$minor_gridlines) {
       plot +
-        theme(plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color),
-              panel.grid.major = element_blank(),
+        theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())
     }
-    
-    
-    
-    
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   
   
   # #########################################################################
   # #########################################################################
   # # Facet Grid function
   # # Function for generating the plot that is called later in the script
-  # generateFacetGrid <- function(data_filtered, input) {
-  #   
-  #   # Changing the label of the x and y axis
-  #   # If there is no input in the text box, make the title the name of the column
-  #   if(input$x_title == ""){
-  #     x = input$x_column
-  #   } else {
-  #     # Otherwise, make it the text entered
-  #     x = input$x_title
-  #   }
-  #   # If there is no input in the text box, make the title the name of the column
-  #   if(input$y_title == ""){
-  #     y = input$y_column
-  #   } else {
-  #     # Otherwise, make it the text entered
-  #     y = input$y_title
-  #   }
-  #   # If there is no input in the text box, make the title the name of the column
-  #   if(input$legend_title == ""){
-  #     legend = input$x_column
-  #   } else {
-  #     # Otherwise, make it the text entered
-  #     legend = input$legend_title
-  #   }
-  #   
-  #   if(input$multiple_condition_title1 == ""){
-  #     condition1 = x
-  #   } else {
-  #     condtion1 = input$multiple_condition_title1
-  #   }
-  #   if(input$multiple_condition_title1 == ""){
-  #     condition1 = x
-  #   } else {
-  #     condtion1 = input$multiple_condition_title1
-  #   }
-  #   if(input$multiple_condition_title1 == ""){
-  #     condition2 = x
-  #   } else {
-  #     condtion2 = input$multiple_condition_title2
-  #   }
-  #   
-  #   
-  #   
-  #   # Making the first data frame to hold the info from the first item
-  #   data1_filtered <- data.frame(
-  #     x_data = data1$data[,input$x_column],
-  #     y_data = data1$data[,input$y_column],
-  #     type = condition1,
-  #     metric = y
-  #   )
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Doesn't like when the columns are named the same thing
-  #   if(input$x_column == input$y_column){
-  #     # Renaming the x column and getting rid of NAs
-  #     data1_filtered <- data1_filtered %>%
-  #       rename(x_data = input$x_column) %>%
-  #       rename(y_data = paste0(input$y_column,".1")) 
-  #   }
-  #   
-  #   
-  #   # Making the second data frame
-  #   data2_filtered <- data.frame(
-  #     x_data = data1$data[,input$x_column2],
-  #     y_data = data1$data[,input$y_column],
-  #     type = condition1,
-  #     metric = y
-  #   )
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Doesn't like when the columns are named the same thing
-  #   if(input$x_column2 == input$y_column){
-  #     # Renaming the x column and getting rid of NAs
-  #     data2_filtered <- data2_filtered %>%
-  #       rename(x_data = input$x_column2) %>%
-  #       rename(y_data = paste0(input$y_column,".1")) 
-  #   } 
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Adding types for the titles
-  #   if(input$multiple_condition_title1 == ""){
-  #     data1_filtered$type <- input$x_column
-  #   } else{
-  #     data1_filtered$type <- input$multiple_condition_title1
-  #   }
-  #   if(input$multiple_condition_title2 == ""){
-  #     data2_filtered$type <- input$x_column2
-  #   } else{
-  #     data2_filtered$type <- input$multiple_condition_title2
-  #   }
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Combining the data frames
-  #   combined_data <- rbind(data1_filtered,data2_filtered)
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Baseline plot for all the stuff needed for all conditions SHAPE ONLY
-  #   if(input$multiple_color == "Shapes"){
-  #     plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
-  #       # plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
-  #       geom_point(size = input$point_size, aes(shape = type)) +
-  #       # scale_shape_manual(values = c(5,16))+
-  #       labs(x = x, y = y, title = input$plot_title) +
-  #       theme(legend.background = element_rect(fill = input$legend_background),
-  #             text = element_text(family = input$Font)) +
-  #       theme(panel.border = element_rect(color = input$outline_color),
-  #             legend.background = element_rect(fill = input$legend_background))
-  #   }
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Baseline plot for all the stuff needed for all conditions COLOR ONLY
-  #   if(input$multiple_color == "Color"){
-  #     plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
-  #       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
-  #         # geom_point(size = input$point_size, outlier.shape = NA, aes(shape = type)) +
-  #         labs(x = x, y = y, title = input$plot_title) +
-  #         scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
-  #         theme(legend.background = element_rect(fill = input$legend_background),
-  #               text = element_text(family = input$Font)) +
-  #         theme(panel.border = element_rect(color = input$outline_color),
-  #               legend.background = element_rect(fill = input$legend_background))
-  #   }
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Adding a regression line
-  #   if(input$regression_boolean){
-  #     plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se)
-  #     # plot <- plot + geom_smooth(method = input$regression_method, color = aes(color = type), se = input$regression_se, fill = aes(color = type))
-  #     # plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
-  #     
-  #   }
-  #   
-  #   # Overriding axes bound
-  #   if(input$override_axes){
-  #     plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
-  #   } else {
-  #     plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
-  #     print(paste0(input$y_axis_min,input$y_axis_max))
-  #   }
-  #   
-  #   # Adding an outline or not
-  #   if(input$outline_boolean){
-  #     # Add outline to the plot
-  #     plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))
-  #   } 
-  #   
-  #   
-  #   # Plotting Data
-  #   plot <- plot  +
-  #     labs(x = x, y = y, title = input$plot_title, colour = legend) +
-  #     theme(
-  #       # legend.position = "none",
-  #       plot.title = element_text(size=20),
-  #       axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
-  #       axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-  #       axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
-  #       axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
-  #     ) 
-  #   
-  #   
-  #   
-  #   
-  #   
-  #   # Plotting in case there are gridlines
-  #   if (input$gridlines && input$minor_gridlines) {
-  #     plot +
-  #       theme(plot.background = element_rect(fill = input$background_color),
-  #             panel.background = element_rect(fill = input$panel_color),
-  #             panel.grid.major = element_line(color = input$major_gridline_color),
-  #             panel.grid.minor = element_line(color = input$minor_gridline_color)
-  #       )
-  #     # Condition where you only want minor gridlines
-  #   } else if(!input$gridlines && input$minor_gridlines) {
-  #     plot +
-  #       theme(plot.background = element_rect(fill = input$background_color),
-  #             panel.background = element_rect(fill = input$panel_color),
-  #             panel.grid.major = element_blank(),
-  #             panel.grid.minor = element_line(color = input$minor_gridline_color)
-  #       )
-  #     # Condition where you only want major gridlines
-  #   } else if(input$gridlines && !input$minor_gridlines) {
-  #     plot +
-  #       theme(plot.background = element_rect(fill = input$background_color),
-  #             panel.background = element_rect(fill = input$panel_color),
-  #             panel.grid.major = element_line(color = input$major_gridline_color),
-  #             panel.grid.minor = element_blank())
-  #     # Condition where you want neither
-  #   } else if(!input$gridlines && !input$minor_gridlines) {
-  #     plot +
-  #       theme(plot.background = element_rect(fill = input$background_color),
-  #             panel.background = element_rect(fill = input$panel_color),
-  #             panel.grid.major = element_blank(),
-  #             panel.grid.minor = element_blank())
-  #   }
-  #   
-  #   
-  #   
-  #   
-  # }
-  # 
-  # 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
   
   
   
@@ -1107,10 +671,10 @@ shinyServer(function(input, output, session) {
     } else if(input$plotType == "Boxplot"){
       req(input$x_column2)
       generateBoxplot(data_filtered, input)
+    } else if(input$plotType == "Facet Grid"){
+      req(input$x_column2)
+      generateFacetGrid(data_filtered, input)
     }
-    
-    
-    
   })
   
   
@@ -1140,5 +704,4 @@ shinyServer(function(input, output, session) {
       ggsave(file, plot,scale = 1, width = input$plot_width,height = input$plot_height)
     }
   )
-  
 })
