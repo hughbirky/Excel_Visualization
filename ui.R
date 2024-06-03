@@ -26,7 +26,7 @@ shinyUI(fluidPage(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
                    # Selecting which item you want for each column
                    selectInput("y_column", label = "Y Data",
-                               choices = list("")),
+                               choices = list(""))
                  ),
                  
                  
@@ -34,7 +34,7 @@ shinyUI(fluidPage(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                    # Selecting which item you want for each column
                    selectInput("x_column", label = "X Data",
-                               choices = list("")),
+                               choices = list(""))
                  ),
                  
                 
@@ -46,7 +46,7 @@ shinyUI(fluidPage(
                    
                    selectInput("multiple_color", label = "Color or Shapes",
                                choices = list("Color","Shapes"),
-                               selected = "Shapes"),
+                               selected = "Shapes")
                  ),
                  
                  conditionalPanel(
@@ -61,14 +61,10 @@ shinyUI(fluidPage(
                    selectInput("x_condition_1", label = "X Data (First Set)",
                                choices = list("")),
                    selectInput("x_condition_2", label = "X Data (Second Set)",
-                               choices = list("")),
+                               choices = list(""))
                  ),
                  
-                 
-                 
-                 
-                 
-
+                
                  ###############################################################
                  # Scatterplots
                  # Checkbox for whether or not it is a scatterplot
@@ -89,17 +85,11 @@ shinyUI(fluidPage(
                      conditionalPanel(
                        condition = "input.color_boolean",
                        selectInput("color_data", label = "Color Data",
-                                   choices = list("")),
-                     ),
+                                   choices = list(""))
+                     )
                    ),
                    
-                   
-                   
-                   
-                   
-                   
-            
-  
+
                    # Panel for Regression Settings
                    conditionalPanel(
                      condition = "input.regression_boolean",
@@ -107,12 +97,10 @@ shinyUI(fluidPage(
                      selectInput("regression_method", label = "Regression Type",
                                  choices = list("lm","glm","gam","loess","rlm")),
                      # Deciding whether or not to choose the confidence interval
-                     checkboxInput("regression_se", "Confidence Interval", value = FALSE),
-                   ),
+                     checkboxInput("regression_se", "Confidence Interval", value = FALSE)
+                   )
                  ),
                  
-                 
-
                  
                  #################################################################
                  # Boxplot
@@ -120,24 +108,9 @@ shinyUI(fluidPage(
                    condition = "input.plotType == 'Boxplot'",
                  
                    checkboxInput("boxplot_individual_points_bool", "Individual Points", value = T),
-                   checkboxInput("boxplot_mean_bool", "Mean", value = T),
-                   
-                  
+                   checkboxInput("boxplot_mean_bool", "Mean", value = T)
                  )
         ),
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         # Tab 2: Plot Settings
@@ -154,18 +127,6 @@ shinyUI(fluidPage(
                  selectInput("legend_position", label = "Legend Position",
                              choices = list("normal","none","top","bottom"), selected = "normal"),
                  
-                 
-                 # Overriding Axes
-                 checkboxInput("override_axes", label = "Axes Slider Adjust", value = FALSE),
-                 # Allowing the participant to crop the graph if they want to
-                 # conditionalPanel(
-                 #   condition = "input.override_axes",
-                 #   # Input for x_axis
-                 #   sliderInput("override_x", "X Axis Range", min = 0, max = 7000, value = c(0,100),step = 0.01),
-                 #   # Input for y_axis
-                 #   sliderInput("override_y", "Y Axis Range", min = 0, max = 7000, value = c(0,100), step = 0.01),
-                 # ),
-                 
 
                  # Allowing for integer inputs for the range of the inputs
                  numericInput("y_axis_min", "Y Min",value = 0),
@@ -175,13 +136,13 @@ shinyUI(fluidPage(
                  
 
                  # Selecting which item you want for each column of the second set
-                 numericInput("x1_axis_min", "X1 Min",value = 0),
-                 numericInput("x1_axis_max", "X1 Max",value = 0),
+                 conditionalPanel(
+                   condition = "input.plotType != 'Scatterplot'",
+                   numericInput("x1_axis_min", "X1 Min",value = 0),
+                   numericInput("x1_axis_max", "X1 Max",value = 0)
+                 ),
+                 
             
-                 
-                 
-                 
-
                  
                  # Select axes size
                  sliderInput("axes_size", "Axes Size", value = 15, min = 1, max = 30),
@@ -191,13 +152,7 @@ shinyUI(fluidPage(
                  
         ),
         
-        
-        
-        
-        
-        
-        
-        
+
         tabPanel("Color",
                  
                  
@@ -255,7 +210,14 @@ shinyUI(fluidPage(
                    # Conditional panel for showing the color option for the regression line
                    conditionalPanel(
                      condition = "input.regression_boolean && input.plotType == 'Scatterplot'",
-                     colourInput("regression_color", "Regression Color", value = "black"),
+                     colourInput("regression_color", "Regression Color", value = "black")
+                     
+                     
+                   ),
+                   
+                   # Conditional panel for showing the color option for the regression line
+                   conditionalPanel(
+                     condition = "input.regression_boolean && input.plotType != 'Scatterplot'",
                      
                      conditionalPanel(
                        condition = "input.plotType = 'Multiple Scatterplot'",
@@ -271,67 +233,37 @@ shinyUI(fluidPage(
         ),
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
         
         tabPanel("Labels",
 
                  ##############################################################
                  # Normal Scatterplot
                  # Allowing them to override the plotting
+                 selectInput("Font", label = "Font",
+                             choices = list("Arial", "Times New Roman"), selected = "Arial"),
+                 
+                 # Input for axes and title labels
+                 textInput("plot_title", label = "Plot Title", value = ""),
+                 textInput("x_title", label = "X Axis Title", value = ""),
+                 textInput("y_title", label = "Y Axis Title", value = ""),
+
+                 # Panel for the axes hiding
                  conditionalPanel(
-                   condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                   
-                   selectInput("Font", label = "Font",
-                               choices = list("Arial", "Times New Roman"), selected = "Arial"),
-                   
-                   # Input for axes and title labels
-                   textInput("plot_title", label = "Plot Title", value = ""),
-                   textInput("x_title", label = "X Axis Title", value = ""),
-                   textInput("y_title", label = "Y Axis Title", value = ""),
-
-                   # Panel for the axes hiding
-                   conditionalPanel(
-                     condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                     textInput("legend_title", label = "Legend Title", value = ""),
-                   ),
-
-                   # Panel for changing the names of the conditions
-                   conditionalPanel(
-                     condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                     textInput("multiple_condition_title1", label = "Condition 1", value = ""),
-                     textInput("multiple_condition_title2", label = "Condition 2", value = ""),
-                   ),
-                   
-                   
-
-
-                   
-                 )
+                   condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
+                   textInput("legend_title", label = "Legend Title", value = "")
+                 ),
+                  
+                 # Panel for changing the names of the conditions
+                 conditionalPanel(
+                   condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
+                   textInput("multiple_condition_title1", label = "Condition 1", value = ""),
+                   textInput("multiple_condition_title2", label = "Condition 2", value = "")
+                 ),
         ),
         
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+ 
         tabPanel("Export",
                  # Input for plot width
                  numericInput("plot_width", "Plot Export Width", value = 8),

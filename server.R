@@ -220,14 +220,6 @@ shinyServer(function(input, output, session) {
     }
     
     
-    # Overriding axes bound
-    if(input$override_axes){
-      plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
-    } else {
-      plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
-      
-    }
-    
     
     # Adding an outline or not
     if(input$outline_boolean){
@@ -373,8 +365,7 @@ shinyServer(function(input, output, session) {
         labs(x = x, y = y, title = input$plot_title) +
         theme(legend.background = element_rect(fill = input$legend_background),
               text = element_text(family = input$Font),
-              panel.border = element_rect(color = input$outline_color),
-              legend.background = element_rect(fill = input$legend_background))
+              panel.border = element_rect(color = input$outline_color))
     }
     
 
@@ -393,6 +384,11 @@ shinyServer(function(input, output, session) {
               panel.background = element_rect(fill = input$panel_color))
     }
     
+    
+    # Adjusting the position of the legend
+    if(input$legend_position != "normal"){
+      plot <- plot + theme(legend.position = input$legend_position)
+    }
     
     # Adding a regression line
     if(input$regression_boolean){
@@ -555,8 +551,7 @@ shinyServer(function(input, output, session) {
 
       geom_boxplot(outlier.shape = boxplot_outlier_shape) +
       scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend) +
-      theme(legend.position = "none",
-            legend.background = element_rect(fill = input$legend_background),
+      theme(legend.background = element_rect(fill = input$legend_background),
             text = element_text(family = input$Font),
             plot.background = element_rect(fill = input$background_color),
             panel.background = element_rect(fill = input$panel_color)) +
@@ -577,6 +572,11 @@ shinyServer(function(input, output, session) {
       # Add outline to the plot
       plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))
     } 
+    
+    # Adjusting the position of the legend
+    if(input$legend_position != "normal"){
+      plot <- plot + theme(legend.position = input$legend_position)
+    }
     
     
     # Adding a mean point
