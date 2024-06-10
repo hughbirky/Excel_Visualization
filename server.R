@@ -371,15 +371,13 @@ shinyServer(function(input, output, session) {
 
     # Baseline plot for all the stuff needed for all conditions COLOR ONLY
     if(input$multiple_color == "Color"){
-      plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
         plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
-        # geom_point(size = input$point_size, outlier.shape = NA, aes(shape = type)) +
+        geom_point(size = input$point_size) +
         labs(x = x, y = y, title = input$plot_title) +
         scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
         theme(legend.background = element_rect(fill = input$legend_background),
               text = element_text(family = input$Font),
               panel.border = element_rect(color = input$outline_color),
-              legend.background = element_rect(fill = input$legend_background),
               plot.background = element_rect(fill = input$background_color),
               panel.background = element_rect(fill = input$panel_color))
     }
@@ -397,12 +395,12 @@ shinyServer(function(input, output, session) {
       
     
     # Overriding axes bound
-    if(input$override_axes){
-      plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
-    } else {
-      plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
-      print(paste0(input$y_axis_min,input$y_axis_max))
-    }
+    # if(input$override_axes){
+    #   plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
+    # } else {
+    #   plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
+    #   print(paste0(input$y_axis_min,input$y_axis_max))
+    # }
     
     
     # Adding an outline or not

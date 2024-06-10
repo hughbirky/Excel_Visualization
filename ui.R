@@ -203,8 +203,8 @@ shinyUI(fluidPage(
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
                      condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                     colourInput("point_color1", "Set Color 1", value = "white"),
-                     colourInput("point_color2", "Set Color 2", value = "lightgrey"),
+                     colourInput("point_color1", "Set Color 1", value = "red"),
+                     colourInput("point_color2", "Set Color 2", value = "blue"),
                    ),
                    
                    # Conditional panel for showing the color option for the regression line
