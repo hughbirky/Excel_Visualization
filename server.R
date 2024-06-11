@@ -219,6 +219,14 @@ shinyServer(function(input, output, session) {
       plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
     }
     
+    # Overriding axes bound
+    # if(input$override_axes){
+    #   plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
+    # } else {
+    plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
+    # print(paste0(input$y_axis_min,input$y_axis_max))
+    # }
+    
     
     
     # Adding an outline or not
@@ -359,7 +367,6 @@ shinyServer(function(input, output, session) {
     # Baseline plot for all the stuff needed for all conditions SHAPE ONLY
     if(input$multiple_color == "Shapes"){
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, lty = type)) +
-        # plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
         geom_point(size = input$point_size, aes(shape = type)) +
         # scale_shape_manual(values = c(5,16))+
         labs(x = x, y = y, title = input$plot_title) +
@@ -398,8 +405,8 @@ shinyServer(function(input, output, session) {
     # if(input$override_axes){
     #   plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
     # } else {
-    #   plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
-    #   print(paste0(input$y_axis_min,input$y_axis_max))
+      plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
+      # print(paste0(input$y_axis_min,input$y_axis_max))
     # }
     
     
@@ -412,7 +419,7 @@ shinyServer(function(input, output, session) {
     
     # Plotting Data
     plot <- plot  +
-      labs(x = x, y = y, title = input$plot_title, colour = legend) +
+      labs(x = x, y = y, title = input$plot_title, colour = legend, shape = legend) +
       theme(
         # legend.position = "none",
         plot.title = element_text(size=20),
