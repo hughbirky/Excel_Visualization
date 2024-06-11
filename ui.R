@@ -46,8 +46,27 @@ shinyUI(fluidPage(
                    
                    selectInput("multiple_color", label = "Color or Shapes",
                                choices = list("Color","Shapes"),
-                               selected = "Shapes")
+                               selected = "Shapes"),
+                   conditionalPanel(
+                     condition = "input.multiple_color == 'Shapes'",
+                     selectInput("shapes1", label = "X1 Shape",
+                                 choices = list("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
+                                                "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
+                                                "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
+                                                "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
+                                                "Filled Triangle Point-Down Blue"),
+                                 selected = ("Circle")),
+                     selectInput("shapes2", label = "X2 Shape",
+                                 choices = list("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
+                                                "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
+                                                "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
+                                                "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
+                                                "Filled Triangle Point-Down Blue"),
+                                 selected = ("Triangle Point Up"))
+                   ),
                  ),
+                 
+                 
                  
                  conditionalPanel(
                    condition = "input.plotType == 'Facet Grid'",

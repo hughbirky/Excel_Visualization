@@ -366,9 +366,26 @@ shinyServer(function(input, output, session) {
 
     # Baseline plot for all the stuff needed for all conditions SHAPE ONLY
     if(input$multiple_color == "Shapes"){
+      # Getting the index number of the shape selected
+      shape_index1 = which(c("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
+                                         "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
+                                         "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
+                                         "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
+                                         "Filled Triangle Point-Down Blue") == input$shapes1) - 1
+      shape_index2 = which(c("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
+                                         "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
+                                         "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
+                                         "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
+                                         "Filled Triangle Point-Down Blue") == input$shapes2) - 1
+      
+
+      
+      
+      
+      
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, lty = type)) +
         geom_point(size = input$point_size, aes(shape = type)) +
-        # scale_shape_manual(values = c(5,16))+
+        scale_shape_manual(values = c(shape_index1,shape_index2))+
         labs(x = x, y = y, title = input$plot_title) +
         theme(legend.background = element_rect(fill = input$legend_background),
               text = element_text(family = input$Font),
