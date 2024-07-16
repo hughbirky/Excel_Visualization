@@ -23,18 +23,18 @@ shinyServer(function(input, output, session) {
     ######################################################################################################
     ######################################################################################################
     # In case you want to make multiple that quickly update between and don't have to change every time
-    # updateTextInput(session, "multiple_condition_title1", value = "AO")
-    # updateTextInput(session, "multiple_condition_title2", value = "AT")
-    # updateTextInput(session, "x_title", value = "Orthographic Condition")
-    # updateTextInput(session, "x_title", value = " ")
-    
-    
+    updateTextInput(session, "multiple_condition_title1", value = "Auditory only")
+    updateTextInput(session, "multiple_condition_title2", value = "Auditory + text")
+    updateTextInput(session, "x_title", value = "Orthographic condition")
+    updateTextInput(session, "x_title", value = " ")
+    # 
+    # 
     # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "Z_withinpart_AO")
     # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "Z_withinpart_AT")
-    # updateTextInput(session, "y_title", value = "RTs (z-scores, wintin participant)")
+    # updateTextInput(session, "y_title", value = "Reaction times (z-scores, wintin participant)")
     # updateNumericInput(session, "y_axis_min", value = -1)
     # updateNumericInput(session, "y_axis_max", value = 1)
-    
+    # 
     
     # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "aprime_AO")
     # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "aprime_AT")
@@ -45,7 +45,7 @@ shinyServer(function(input, output, session) {
     
     # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "CR_AO")
     # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "CR_AT")
-    # updateTextInput(session, "y_title", value = "Confidence Ratings")
+    # updateTextInput(session, "y_title", value = "Confidence ratings")
     # updateNumericInput(session, "y_axis_min", value = 0)
     # updateNumericInput(session, "y_axis_max", value = 100)
     
@@ -54,16 +54,16 @@ shinyServer(function(input, output, session) {
     
     
     
-    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "aprimeAO")
-    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "aprimeAT")
-    # updateTextInput(session, "y_title", value = "Sensitivity (A’)")
-    # updateNumericInput(session, "y_axis_min", value = 0)
-    # updateNumericInput(session, "y_axis_max", value = 1)
+    updateSelectInput(session, "x_column", choices = names(data1$data), selected = "aprimeAO")
+    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "aprimeAT")
+    updateTextInput(session, "y_title", value = "Sensitivity (A’)")
+    updateNumericInput(session, "y_axis_min", value = 0)
+    updateNumericInput(session, "y_axis_max", value = 1)
     
     
     # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "FA_AT_Rat")
     # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "FA_AT_Rat1_A")
-    # updateTextInput(session, "y_title", value = "Confidence Ratings")
+    # updateTextInput(session, "y_title", value = "Confidence ratings")
     # updateNumericInput(session, "y_axis_min", value = 0)
     # updateNumericInput(session, "y_axis_max", value = 100)
   })
@@ -92,53 +92,53 @@ shinyServer(function(input, output, session) {
   
   
   # Update ranges every time these change for the x axis
-  observeEvent(toListenX(), {
-
-      req(data1$data)  # Ensure data is available
-      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-      x_max1 <- vector(length = 2)
-      x_min1 <- vector(length = 2)
-
-      # Filtering Data
-      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-
-
-      # Finding the min and max of the x and y columns
-      x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
-      x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
-      x_max <- max(x_max1)
-      x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
-      x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
-      x_min <- min(x_min1)
-
-
-
-      updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
-      updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
-      updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
-  })
-  
-  
-  # Update ranges everytime these change for the y axis
-  observeEvent(toListenY(), {
-
-      req(data1$data)  # Ensure data is available
-      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-
-      # Filtering Data
-      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-
-
-      # Finding the min and max of the x and y column
-      y_max <- max(data1[[input$y_column]], na.rm = TRUE)
-      y_min <- min(data1[[input$y_column]], na.rm = TRUE)
-
-
-
-      updateNumericInput(session = session, inputId = "y_axis_min", value = y_min)
-      updateNumericInput(session = session, inputId = "y_axis_max", value = y_max)
-      updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
-  })
+  # observeEvent(toListenX(), {
+  # 
+  #     req(data1$data)  # Ensure data is available
+  #     req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+  #     x_max1 <- vector(length = 2)
+  #     x_min1 <- vector(length = 2)
+  # 
+  #     # Filtering Data
+  #     data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+  # 
+  # 
+  #     # Finding the min and max of the x and y columns
+  #     x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
+  #     x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
+  #     x_max <- max(x_max1)
+  #     x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
+  #     x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
+  #     x_min <- min(x_min1)
+  # 
+  # 
+  # 
+  #     updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
+  #     updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
+  #     updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
+  # })
+  # 
+  # 
+  # # Update ranges everytime these change for the y axis
+  # observeEvent(toListenY(), {
+  # 
+  #     req(data1$data)  # Ensure data is available
+  #     req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+  # 
+  #     # Filtering Data
+  #     data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+  # 
+  # 
+  #     # Finding the min and max of the x and y column
+  #     y_max <- max(data1[[input$y_column]], na.rm = TRUE)
+  #     y_min <- min(data1[[input$y_column]], na.rm = TRUE)
+  # 
+  # 
+  # 
+  #     updateNumericInput(session = session, inputId = "y_axis_min", value = y_min)
+  #     updateNumericInput(session = session, inputId = "y_axis_max", value = y_max)
+  #     updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
+  # })
   
   
   #########################################################################
@@ -442,8 +442,10 @@ shinyServer(function(input, output, session) {
         plot.title = element_text(size=20),
         axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
         axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-        axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
-        axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
+        # axis.text.x = element_text(size = input$num_size, face = "bold"),  # Increase size of x-axis numbers
+        # axis.text.y = element_text(size = input$num_size, face = "bold"),  # Increase size of y-axis numbers
+        axis.text.x = element_text(size = 10, face = "bold"),  # Increase size of x-axis numbers
+        axis.text.y = element_text(size = 10, face = "bold"),  # Increase size of y-axis numbers
       ) 
     
   
@@ -570,15 +572,17 @@ shinyServer(function(input, output, session) {
     
     # Baseline plot for all the stuff needed for all conditions
     plot <- ggplot(combined_data, aes(x = type, y = x_data, fill = type)) +
-
       geom_boxplot(outlier.shape = boxplot_outlier_shape) +
       scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend) +
       theme(legend.background = element_rect(fill = input$legend_background),
             text = element_text(family = input$Font),
             plot.background = element_rect(fill = input$background_color),
-            panel.background = element_rect(fill = input$panel_color)) +
-      labs(x = x, y = y) + 
-      coord_cartesian(ylim = c(input$y_axis_min,input$y_axis_max))
+            panel.background = element_rect(fill = input$panel_color),
+            axis.title.x = element_text(angle = 0, hjust = 0.5,size = 10), # FIX THIS BECAUSE I PUT IT HERE FROM THE LOWER SECTION THAT DOESN"T WORK
+            axis.title.y = element_text(angle = 90, vjust = 0.5,size = 10),
+            axis.text.x = element_text(size = 10,face = "bold"),  # Increase size of x-axis numbers
+            axis.text.y = element_text(size = 10)) +
+      labs(x = x, y = y) + coord_cartesian(ylim = c(input$y_axis_min,input$y_axis_max))
       
 
     
@@ -611,10 +615,14 @@ shinyServer(function(input, output, session) {
     # Plotting Data
     plot +
       theme(plot.title = element_text(size=20),
-        axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
-        axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-        axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
-        axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
+        axis.title.x = element_text(angle = 0, hjust = 0.5,size = 50),
+        axis.title.y = element_text(angle = 90, vjust = 0.5,size = 50),
+        axis.text.x = element_text(size = 50),  # Increase size of x-axis numbers
+        axis.text.y = element_text(size = 50),  # Increase size of y-axis numbers
+        # axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
+        # axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
+        # axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
+        # axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
         text = element_text(family = input$Font),
         # legend.title = element_text(input$legend_title)
         # plot.border = element_rect(color = "black",size = 1)  # Border around the plot

@@ -20,7 +20,7 @@ shinyUI(fluidPage(
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot", "Facet Grid"),
-                             selected = "Scatterplot"),
+                             selected = "Boxplot"),
                  
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
@@ -44,25 +44,28 @@ shinyUI(fluidPage(
                    selectInput("x_column2", label = "X Data (Second Set)",
                                choices = list("")),
                    
-                   selectInput("multiple_color", label = "Color or Shapes",
-                               choices = list("Color","Shapes"),
-                               selected = "Shapes"),
                    conditionalPanel(
-                     condition = "input.multiple_color == 'Shapes'",
-                     selectInput("shapes1", label = "X1 Shape",
-                                 choices = list("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
-                                                "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
-                                                "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
-                                                "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
-                                                "Filled Triangle Point-Down Blue"),
-                                 selected = ("Circle")),
-                     selectInput("shapes2", label = "X2 Shape",
-                                 choices = list("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
-                                                "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
-                                                "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
-                                                "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
-                                                "Filled Triangle Point-Down Blue"),
-                                 selected = ("Triangle Point Up"))
+                     condition = "input.plotType == 'Multiple Scatterplot'",
+                     selectInput("multiple_color", label = "Color or Shapes",
+                                 choices = list("Color","Shapes"),
+                                 selected = "Shapes"),
+                     conditionalPanel(
+                       condition = "input.multiple_color == 'Shapes'",
+                       selectInput("shapes1", label = "X1 Shape",
+                                   choices = list("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
+                                                  "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
+                                                  "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
+                                                  "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
+                                                  "Filled Triangle Point-Down Blue"),
+                                   selected = ("Circle")),
+                       selectInput("shapes2", label = "X2 Shape",
+                                   choices = list("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
+                                                  "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
+                                                  "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
+                                                  "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
+                                                  "Filled Triangle Point-Down Blue"),
+                                   selected = ("Triangle Point Up"))
+                     ),
                    ),
                  ),
                  
@@ -114,7 +117,7 @@ shinyUI(fluidPage(
                      condition = "input.regression_boolean",
                      # Selecting which item you want for each column
                      selectInput("regression_method", label = "Regression Type",
-                                 choices = list("lm","glm","gam","loess","rlm")),
+                                 choices = list("lm","glm","gam","loess")),
                      # Deciding whether or not to choose the confidence interval
                      checkboxInput("regression_se", "Confidence Interval", value = FALSE)
                    )
@@ -144,7 +147,7 @@ shinyUI(fluidPage(
                  checkboxInput("outline_boolean", "Show Plot Outline", value = T),
                  
                  selectInput("legend_position", label = "Legend Position",
-                             choices = list("normal","none","top","bottom"), selected = "normal"),
+                             choices = list("normal","none","top","bottom"), selected = "none"),
                  
 
                  # Allowing for integer inputs for the range of the inputs
@@ -164,7 +167,7 @@ shinyUI(fluidPage(
             
                  
                  # Select axes size
-                 sliderInput("axes_size", "Axes Size", value = 15, min = 1, max = 30),
+                 sliderInput("axes_size", "Axes Size", value = 10, min = 1, max = 30),
                  # Select numbers size
                  sliderInput("num_size", "Number Size", value = 10, min = 1, max = 30),
                  
@@ -222,8 +225,8 @@ shinyUI(fluidPage(
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
                      condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                     colourInput("point_color1", "Set Color 1", value = "red"),
-                     colourInput("point_color2", "Set Color 2", value = "blue"),
+                     colourInput("point_color1", "Set Color 1", value = "white"),
+                     colourInput("point_color2", "Set Color 2", value = "grey"),
                    ),
                    
                    # Conditional panel for showing the color option for the regression line
@@ -255,10 +258,6 @@ shinyUI(fluidPage(
 
         
         tabPanel("Labels",
-
-                 ##############################################################
-                 # Normal Scatterplot
-                 # Allowing them to override the plotting
                  selectInput("Font", label = "Font",
                              choices = list("Arial", "Times New Roman"), selected = "Arial"),
                  
@@ -266,19 +265,19 @@ shinyUI(fluidPage(
                  textInput("plot_title", label = "Plot Title", value = ""),
                  textInput("x_title", label = "X Axis Title", value = ""),
                  textInput("y_title", label = "Y Axis Title", value = ""),
-
+                 
                  # Panel for the axes hiding
                  conditionalPanel(
-                   condition = "input.color_boolean && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
+                   condition = "input.color_boolean == TRUE && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                    textInput("legend_title", label = "Legend Title", value = "")
                  ),
-                  
+                 
                  # Panel for changing the names of the conditions
                  conditionalPanel(
                    condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                    textInput("multiple_condition_title1", label = "Condition 1", value = ""),
                    textInput("multiple_condition_title2", label = "Condition 2", value = "")
-                 ),
+                 )
         ),
         
         
