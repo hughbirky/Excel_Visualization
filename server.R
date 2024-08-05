@@ -18,15 +18,15 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
     updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
     updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
-    
 
-    ######################################################################################################
-    ######################################################################################################
-    # In case you want to make multiple that quickly update between and don't have to change every time
-    updateTextInput(session, "multiple_condition_title1", value = "Auditory only")
-    updateTextInput(session, "multiple_condition_title2", value = "Auditory + text")
-    updateTextInput(session, "x_title", value = "Orthographic condition")
-    updateTextInput(session, "x_title", value = " ")
+
+    # ######################################################################################################
+    # ######################################################################################################
+    # # In case you want to make multiple that quickly update between and don't have to change every time
+    # updateTextInput(session, "multiple_condition_title1", value = "Auditory only")
+    # updateTextInput(session, "multiple_condition_title2", value = "Auditory + text")
+    # updateTextInput(session, "x_title", value = "Orthographic condition")
+    # updateTextInput(session, "x_title", value = " ")
     # 
     # 
     # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "Z_withinpart_AO")
@@ -54,11 +54,11 @@ shinyServer(function(input, output, session) {
     
     
     
-    updateSelectInput(session, "x_column", choices = names(data1$data), selected = "aprimeAO")
-    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "aprimeAT")
-    updateTextInput(session, "y_title", value = "Sensitivity (A’)")
-    updateNumericInput(session, "y_axis_min", value = 0)
-    updateNumericInput(session, "y_axis_max", value = 1)
+    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "aprimeAO")
+    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "aprimeAT")
+    # updateTextInput(session, "y_title", value = "Sensitivity (A’)")
+    # updateNumericInput(session, "y_axis_min", value = 0)
+    # updateNumericInput(session, "y_axis_max", value = 1)
     
     
     # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "FA_AT_Rat")
@@ -92,53 +92,53 @@ shinyServer(function(input, output, session) {
   
   
   # Update ranges every time these change for the x axis
-  # observeEvent(toListenX(), {
-  # 
-  #     req(data1$data)  # Ensure data is available
-  #     req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-  #     x_max1 <- vector(length = 2)
-  #     x_min1 <- vector(length = 2)
-  # 
-  #     # Filtering Data
-  #     data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-  # 
-  # 
-  #     # Finding the min and max of the x and y columns
-  #     x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
-  #     x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
-  #     x_max <- max(x_max1)
-  #     x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
-  #     x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
-  #     x_min <- min(x_min1)
-  # 
-  # 
-  # 
-  #     updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
-  #     updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
-  #     updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
-  # })
-  # 
-  # 
-  # # Update ranges everytime these change for the y axis
-  # observeEvent(toListenY(), {
-  # 
-  #     req(data1$data)  # Ensure data is available
-  #     req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-  # 
-  #     # Filtering Data
-  #     data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-  # 
-  # 
-  #     # Finding the min and max of the x and y column
-  #     y_max <- max(data1[[input$y_column]], na.rm = TRUE)
-  #     y_min <- min(data1[[input$y_column]], na.rm = TRUE)
-  # 
-  # 
-  # 
-  #     updateNumericInput(session = session, inputId = "y_axis_min", value = y_min)
-  #     updateNumericInput(session = session, inputId = "y_axis_max", value = y_max)
-  #     updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
-  # })
+  observeEvent(toListenX(), {
+
+      req(data1$data)  # Ensure data is available
+      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+      x_max1 <- vector(length = 2)
+      x_min1 <- vector(length = 2)
+
+      # Filtering Data
+      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+
+
+      # Finding the min and max of the x and y columns
+      x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
+      x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
+      x_max <- max(x_max1)
+      x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
+      x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
+      x_min <- min(x_min1)
+
+
+
+      updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
+      updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
+      updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
+  })
+
+
+  # Update ranges everytime these change for the y axis
+  observeEvent(toListenY(), {
+
+      req(data1$data)  # Ensure data is available
+      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
+
+      # Filtering Data
+      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+
+
+      # Finding the min and max of the x and y column
+      y_max <- max(data1[[input$y_column]], na.rm = TRUE)
+      y_min <- min(data1[[input$y_column]], na.rm = TRUE)
+
+
+
+      updateNumericInput(session = session, inputId = "y_axis_min", value = y_min)
+      updateNumericInput(session = session, inputId = "y_axis_max", value = y_max)
+      updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
+  })
   
   
   #########################################################################
@@ -389,7 +389,9 @@ shinyServer(function(input, output, session) {
         labs(x = x, y = y, title = input$plot_title) +
         theme(legend.background = element_rect(fill = input$legend_background),
               text = element_text(family = input$Font),
-              panel.border = element_rect(color = input$outline_color))
+              panel.border = element_rect(color = input$outline_color),
+              plot.background = element_rect(fill = input$background_color),
+              panel.background = element_rect(fill = input$panel_color))
     }
     
 
@@ -414,7 +416,7 @@ shinyServer(function(input, output, session) {
     
     # Adding a regression line
     if(input$regression_boolean){
-      plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se)
+      plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se, show.legend = FALSE)
     }
       
     

@@ -20,7 +20,7 @@ shinyUI(fluidPage(
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot", "Facet Grid"),
-                             selected = "Boxplot"),
+                             selected = "Scatterplot"),
                  
                  conditionalPanel(
                    condition = "input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot'",
@@ -128,8 +128,10 @@ shinyUI(fluidPage(
                  # Boxplot
                  conditionalPanel(
                    condition = "input.plotType == 'Boxplot'",
-                 
+                   # Allows you to set individual points to appear on the boxplot
                    checkboxInput("boxplot_individual_points_bool", "Individual Points", value = T),
+                   # Allows you to set 
+                   # numericInput(""),
                    checkboxInput("boxplot_mean_bool", "Mean", value = T)
                  )
         ),
@@ -147,7 +149,7 @@ shinyUI(fluidPage(
                  checkboxInput("outline_boolean", "Show Plot Outline", value = T),
                  
                  selectInput("legend_position", label = "Legend Position",
-                             choices = list("normal","none","top","bottom"), selected = "none"),
+                             choices = list("normal","none","top","bottom"), selected = "normal"),
                  
 
                  # Allowing for integer inputs for the range of the inputs
@@ -225,8 +227,8 @@ shinyUI(fluidPage(
                    # Conditional panel for showing the color option for the gridlines
                    conditionalPanel(
                      condition = "input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
-                     colourInput("point_color1", "Set Color 1", value = "white"),
-                     colourInput("point_color2", "Set Color 2", value = "grey"),
+                     colourInput("point_color1", "Set Color 1", value = "red"),
+                     colourInput("point_color2", "Set Color 2", value = "blue"),
                    ),
                    
                    # Conditional panel for showing the color option for the regression line
