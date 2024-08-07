@@ -591,6 +591,7 @@ shinyServer(function(input, output, session) {
     # Adding individual points
     if(input$boxplot_individual_points_bool){
       # Add outline to the plot
+      set.seed(input$seed)
       plot <- plot + geom_jitter(color="black", size=2.5, alpha=0.9,height = 0,width = 0.25,shape = 1,stroke = 1)
     } 
     

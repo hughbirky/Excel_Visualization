@@ -130,8 +130,10 @@ shinyUI(fluidPage(
                    condition = "input.plotType == 'Boxplot'",
                    # Allows you to set individual points to appear on the boxplot
                    checkboxInput("boxplot_individual_points_bool", "Individual Points", value = T),
-                   # Allows you to set 
-                   # numericInput(""),
+                   conditionalPanel(
+                     condition = "input.boxplot_individual_points_bool",
+                     # Allows you to set the seed 
+                     numericInput("seed", "Set Seed",value = 0)),
                    checkboxInput("boxplot_mean_bool", "Mean", value = T)
                  )
         ),
