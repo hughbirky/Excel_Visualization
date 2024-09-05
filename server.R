@@ -582,10 +582,10 @@ shinyServer(function(input, output, session) {
             text = element_text(family = input$Font),
             plot.background = element_rect(fill = input$background_color),
             panel.background = element_rect(fill = input$panel_color),
-            axis.title.x = element_text(angle = 0, hjust = 0.5,size = 10), # FIX THIS BECAUSE I PUT IT HERE FROM THE LOWER SECTION THAT DOESN"T WORK
-            axis.title.y = element_text(angle = 90, vjust = 0.5,size = 10),
-            axis.text.x = element_text(size = 10,face = "bold"),  # Increase size of x-axis numbers
-            axis.text.y = element_text(size = 10)) +
+            axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size), # FIX THIS BECAUSE I PUT IT HERE FROM THE LOWER SECTION THAT DOESN"T WORK
+            axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
+            axis.text.x = element_text(size = input$num_size,face = "bold"),  # Increase size of x-axis numbers
+            axis.text.y = element_text(size = input$num_size)) +
       labs(x = x, y = y) + coord_cartesian(ylim = c(input$y_axis_min,input$y_axis_max))
       
 

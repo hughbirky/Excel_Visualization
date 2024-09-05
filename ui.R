@@ -4,7 +4,6 @@ shinyUI(fluidPage(
   titlePanel("Interactive Graphs"),
     
   
-  
   # Sidebar with a file input and select input
   sidebarLayout(
     sidebarPanel(
