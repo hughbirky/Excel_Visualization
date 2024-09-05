@@ -416,7 +416,11 @@ shinyServer(function(input, output, session) {
     
     # Adding a regression line
     if(input$regression_boolean){
-      plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se, show.legend = FALSE)
+      if(input$multiple_color == "Color"){
+        plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se, show.legend = FALSE)
+      } else {
+        plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se,color = input$regression_color_multiple,fill = input$regression_color_multiple,show.legend = FALSE)
+      }
     }
       
     
@@ -444,10 +448,8 @@ shinyServer(function(input, output, session) {
         plot.title = element_text(size=20),
         axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
         axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-        # axis.text.x = element_text(size = input$num_size, face = "bold"),  # Increase size of x-axis numbers
-        # axis.text.y = element_text(size = input$num_size, face = "bold"),  # Increase size of y-axis numbers
-        axis.text.x = element_text(size = 10, face = "bold"),  # Increase size of x-axis numbers
-        axis.text.y = element_text(size = 10, face = "bold"),  # Increase size of y-axis numbers
+        axis.text.x = element_text(size = input$num_size, face = "bold"),  # Increase size of x-axis numbers
+        axis.text.y = element_text(size = input$num_size, face = "bold"),  # Increase size of y-axis numbers
       ) 
     
   
