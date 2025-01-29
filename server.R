@@ -33,9 +33,10 @@ shinyServer(function(input, output, session) {
     
     # If there is no input in the text box, make the title the name of the column
     if(input$legend_title == ""){
-      legend = input$color_data
+      legend = as.character(input$color_data)
     } else { legend = input$legend_title }
     
+    print("We got before")
     # Plotting Data
     plot <- plot + labs(x = x, y = y, title = input$plot_title, colour = legend) +
       theme(
@@ -48,8 +49,12 @@ shinyServer(function(input, output, session) {
         axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
         plot.background = element_rect(fill = input$background_color),
         panel.background = element_rect(fill = input$panel_color),
-      ) +
-      ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
+      ) 
+      if(input$plotType != "Boxplot"){
+        plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max) 
+      } else{
+        plot <- plot + scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend)
+      }
     
     # Adding an outline or not
     if(input$outline_boolean){plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))} 
@@ -326,38 +331,12 @@ shinyServer(function(input, output, session) {
   # Boxplot function
   # Function for generating the plot that is called later in the script
   generateBoxplot <- function(data_filtered, input) {
-    
-    # Changing the label of the x and y axis
-    # If there is no input in the text box, make the title the name of the column
-    if(input$x_title == ""){
-      x = input$x_column
-    } else {
-      # Otherwise, make it the text entered
-      x = input$x_title
-    }
-    # If there is no input in the text box, make the title the name of the column
-    if(input$y_title == ""){
-      y = input$y_column
-    } else {
-      # Otherwise, make it the text entered
-      y = input$y_title
-    }
-    # If there is no input in the text box, make the title the name of the column
-    if(input$legend_title == ""){
-      legend = input$x_column
-    } else {
-      # Otherwise, make it the text entered
-      legend = input$legend_title
-    }
-    
-    
     # Making the first data frame to hold the info from the first item
     data1_filtered <- data.frame(
       x_data <- data1$data[,input$x_column],
       y_data <- data1$data[,input$y_column]
     )
     
-
     # Doesn't like when the columns are named the same thing
     if(input$x_column == input$y_column){
       # Renaming the x column and getting rid of NAs
@@ -371,16 +350,13 @@ shinyServer(function(input, output, session) {
         rename(y_data = paste0(input$y_column))
     }
     
-    
     # Making the second data frame
     data2_filtered <- data.frame(
       x_data <- data1$data[,input$x_column2],
       y_data <- data1$data[,input$y_column]
     )
     
-
     # Doesn't like when the columns are named the same thing
-    
     if(input$x_column2 == input$y_column){
       # Renaming the x column and getting rid of NAs
       data2_filtered <- data2_filtered %>%
@@ -392,7 +368,6 @@ shinyServer(function(input, output, session) {
         rename(x_data = input$x_column2) %>%
         rename(y_data = paste0(input$y_column))
     }
-    
     
     # Adding types for the titles
     if(input$multiple_condition_title1 == ""){
@@ -406,7 +381,6 @@ shinyServer(function(input, output, session) {
       data2_filtered$type <- input$multiple_condition_title2
     }
     
-    
     # Combining the data frames
     combined_data <- rbind(data1_filtered,data2_filtered)
     
@@ -419,19 +393,9 @@ shinyServer(function(input, output, session) {
     # Baseline plot for all the stuff needed for all conditions
     plot <- ggplot(combined_data, aes(x = type, y = x_data, fill = type)) +
       geom_boxplot(outlier.shape = boxplot_outlier_shape) +
-      scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend) +
-      theme(legend.background = element_rect(fill = input$legend_background),
-            text = element_text(family = input$Font),
-            plot.background = element_rect(fill = input$background_color),
-            panel.background = element_rect(fill = input$panel_color),
-            axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size), # FIX THIS BECAUSE I PUT IT HERE FROM THE LOWER SECTION THAT DOESN"T WORK
-            axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-            axis.text.x = element_text(size = input$num_size,face = "bold"),  # Increase size of x-axis numbers
-            axis.text.y = element_text(size = input$num_size)) +
-      labs(x = x, y = y) + coord_cartesian(ylim = c(input$y_axis_min,input$y_axis_max))
+      scale_x_discrete(labels = c("A","B"))
       
-
-    
+      
     # Adding individual points
     if(input$boxplot_individual_points_bool){
       # Add outline to the plot
@@ -439,18 +403,10 @@ shinyServer(function(input, output, session) {
       plot <- plot + geom_jitter(color="black", size=2.5, alpha=0.9,height = 0,width = 0.25,shape = 1,stroke = 1)
     } 
     
-    
-    # Adding an outline or not
-    if(input$outline_boolean){
-      # Add outline to the plot
-      plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))
-    } 
-    
     # Adjusting the position of the legend
     if(input$legend_position != "normal"){
       plot <- plot + theme(legend.position = input$legend_position)
     }
-    
     
     # Adding a mean point
     if(input$boxplot_mean_bool){
@@ -459,46 +415,11 @@ shinyServer(function(input, output, session) {
     } 
 
     
-    # Plotting Data
-    plot +
-      theme(plot.title = element_text(size=20),
-        axis.title.x = element_text(angle = 0, hjust = 0.5,size = 50),
-        axis.title.y = element_text(angle = 90, vjust = 0.5,size = 50),
-        axis.text.x = element_text(size = 50),  # Increase size of x-axis numbers
-        axis.text.y = element_text(size = 50),  # Increase size of y-axis numbers
-        text = element_text(family = input$Font),
-        # legend.title = element_text(input$legend_title)
-        # plot.border = element_rect(color = "black",size = 1)  # Border around the plot
-      ) +
-      xlab(x) +
-      ylab(y) + 
-      labs(legend = legend)+
-      scale_x_discrete(labels = c("A","B")) 
     
+    # Adding general plots
+    plot <- set_plot_elements(plot)
+    return(plot)
     
-    # Plotting in case there are gridlines
-    if (input$gridlines && input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_line(color = input$major_gridline_color),
-              panel.grid.minor = element_line(color = input$minor_gridline_color)
-        )
-      # Condition where you only want minor gridlines
-    } else if(!input$gridlines && input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_line(color = input$minor_gridline_color)
-        )
-      # Condition where you only want major gridlines
-    } else if(input$gridlines && !input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_line(color = input$major_gridline_color),
-              panel.grid.minor = element_blank())
-      # Condition where you want neither
-    } else if(!input$gridlines && !input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    }
   }
   
 
