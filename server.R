@@ -62,14 +62,7 @@ shinyServer(function(input, output, session) {
   observeEvent(toListenX(), {
 
     req(data1$data,input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-
-    
     # Finding the min and max of the x and y columns
-    # x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
-    # x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
-    # 
-    # x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
-    # x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
     if(input$plotType == "Multiple Scatterplot"){
       print("Multiple Scatterplot")
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
@@ -88,9 +81,7 @@ shinyServer(function(input, output, session) {
       x_max <- max(data1[[input$x_column]], na.rm = TRUE)
       print(paste0((x_min), " - ", x_max))
     }
-    # x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]))
-    # x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]))
-  
+    # Update x axis
     updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
     updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
 })
@@ -114,12 +105,9 @@ shinyServer(function(input, output, session) {
       # Finding the min and max of the x and y column
       y_max <- max(data1[[input$y_column]], na.rm = TRUE)
       y_min <- min(data1[[input$y_column]], na.rm = TRUE)
-
-
-
+      # Updating input
       updateNumericInput(session = session, inputId = "y_axis_min", value = y_min)
       updateNumericInput(session = session, inputId = "y_axis_max", value = y_max)
-      updateSliderInput(session, "override_y", max = y_max, min = y_min, value = c(y_min, y_max))
   })
   
   
@@ -128,8 +116,6 @@ shinyServer(function(input, output, session) {
   # Scatterplot function
   # Function for generating the plot that is called later in the script
   generateScatterplot <- function(data_filtered, input) {
-    
-    
     # Changing the label of the x and y axis
     # If there is no input in the text box, make the title the name of the column
     if(input$x_title == ""){
