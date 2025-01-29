@@ -18,7 +18,78 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
   }
   
-  
+  # Function for setting other plot elements
+  set_plot_elements <- function(plot) {
+    # Changing the label of the x and y axis
+    # If there is no input in the text box, make the title the name of the column
+    if(input$x_title == ""){
+      x = input$x_column
+    } else {
+      # Otherwise, make it the text entered
+      x = input$x_title
+    }
+    # If there is no input in the text box, make the title the name of the column
+    if(input$y_title == ""){
+      y = input$y_column
+    } else {
+      # Otherwise, make it the text entered
+      y = input$y_title
+    }
+    # If there is no input in the text box, make the title the name of the column
+    if(input$legend_title == ""){
+      legend = input$color_data
+    } else {
+      # Otherwise, make it the text entered
+      legend = input$legend_title
+    }
+    
+    # Plotting Data
+    plot <- plot + labs(x = x, y = y, title = input$plot_title, colour = legend) +
+      theme(
+        legend.background = element_rect(fill = input$legend_background),
+        text = element_text(family = input$Font),
+        plot.title = element_text(size=20),
+        axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
+        axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
+        axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
+        axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
+        plot.background = element_rect(fill = input$background_color),
+        panel.background = element_rect(fill = input$panel_color),
+      ) +
+      geom_point(size = input$point_size) + 
+      ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
+    
+    # Adding an outline or not
+    if(input$outline_boolean){plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))} 
+    
+    # Plotting in case there are gridlines
+    if (input$gridlines && input$minor_gridlines) {
+      plot +
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
+              panel.grid.minor = element_line(color = input$minor_gridline_color))
+      # Condition where you only want minor gridlines
+    } else if(!input$gridlines && input$minor_gridlines) {
+      plot +
+        theme(panel.grid.major = element_blank(),
+              panel.grid.minor = element_line(color = input$minor_gridline_color))
+      # Condition where you only want major gridlines
+    } else if(input$gridlines && !input$minor_gridlines) {
+      plot +
+        theme(panel.grid.major = element_line(color = input$major_gridline_color),
+              panel.grid.minor = element_blank())
+      # Condition where you want neither
+    } else if(!input$gridlines && !input$minor_gridlines) {
+      plot +
+        theme(panel.grid.major = element_blank(),
+              panel.grid.minor = element_blank())
+    }
+    
+    
+    return(plot)
+    
+    
+    
+  }
   
   # This observe event watches for when the file is uploaded and executes
   observeEvent(input$file1, {
@@ -116,30 +187,6 @@ shinyServer(function(input, output, session) {
   # Scatterplot function
   # Function for generating the plot that is called later in the script
   generateScatterplot <- function(data_filtered, input) {
-    # Changing the label of the x and y axis
-    # If there is no input in the text box, make the title the name of the column
-    if(input$x_title == ""){
-      x = input$x_column
-    } else {
-      # Otherwise, make it the text entered
-      x = input$x_title
-    }
-    # If there is no input in the text box, make the title the name of the column
-    if(input$y_title == ""){
-      y = input$y_column
-    } else {
-      # Otherwise, make it the text entered
-      y = input$y_title
-    }
-    # If there is no input in the text box, make the title the name of the column
-    if(input$legend_title == ""){
-      legend = input$color_data
-    } else {
-      # Otherwise, make it the text entered
-      legend = input$legend_title
-    }
-    
-
     # Checking to see if the person is plotting with color or not
     if(!input$color_boolean){
       # Filters the data fram to only have the columns we want from the select input
@@ -148,14 +195,8 @@ shinyServer(function(input, output, session) {
       # Getting rid of NA values
       data_filtered <-na.omit(data_filtered)
       # Plotting when no color included
-      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
-        # Adding in the scatterplot with the color and size variable
-        geom_point(size = input$point_size, color = input$point_color) +
-        theme(legend.background = element_rect(fill = input$legend_background),
-              text = element_text(family = input$Font)) +
-        labs(x = x, y = y, title = input$plot_title)
+      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column))
     } else {
-      # Filtering to include color
       # Filters the data fram to only have the columns we want from the select input
       req(input$color_data)
       data_filtered <- data1$data %>%
@@ -166,14 +207,7 @@ shinyServer(function(input, output, session) {
       # Plotting for color included
       plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
         # This sets the colors used for the continuous color scale
-        scale_color_continuous(low = input$data_color1, high = input$data_color2)+
-        # Actually plotting the scatterplot
-        geom_point(size = input$point_size) +
-        # Labels the axes and title
-        labs(x = x, y = y, title = input$plot_title) +
-        theme(legend.background = element_rect(fill = input$legend_background),
-              text = element_text(family = input$Font),
-              ) 
+        scale_color_continuous(low = input$data_color1, high = input$data_color2)+ set_plot_elements()
       
       # Adjusting the position of the legend
       if(input$legend_position != "normal"){
@@ -182,52 +216,11 @@ shinyServer(function(input, output, session) {
     }
     
     # Adding a regression line
-    if(input$regression_boolean){
-      plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
-    }
+    if(input$regression_boolean){ plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color) }
     
-    # Overriding axes bound
-    plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
-
-    # Adding an outline or not
-    if(input$outline_boolean){plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))} 
+    plot <- set_plot_elements(plot)
     
-    # Plotting Data
-    plot <- plot  +
-      labs(x = x, y = y, title = input$plot_title, colour = legend) +
-      theme(
-        plot.title = element_text(size=20),
-        axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
-        axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-        axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
-        axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
-        plot.background = element_rect(fill = input$background_color),
-        panel.background = element_rect(fill = input$panel_color),
-      ) 
-    
-    # Plotting in case there are gridlines
-    if (input$gridlines && input$minor_gridlines) {
-       plot +
-        theme(panel.grid.major = element_line(color = input$major_gridline_color),
-              panel.grid.minor = element_line(color = input$minor_gridline_color))
-      # Condition where you only want minor gridlines
-    } else if(!input$gridlines && input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_line(color = input$minor_gridline_color))
-      # Condition where you only want major gridlines
-    } else if(input$gridlines && !input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_line(color = input$major_gridline_color),
-              panel.grid.minor = element_blank())
-      # Condition where you want neither
-    } else if(!input$gridlines && !input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    }
-    
-    
+    return(plot)
     
   }
 
@@ -660,18 +653,16 @@ shinyServer(function(input, output, session) {
 
     # Generating the content needed to save the file
     content = function(file) {
-      req(data1$data)
-      req(input$y_column)
-      req(input$x_column)
+      req(data1$data,input$y_column,input$x_column)
       
       if(input$plotType == "Scatterplot"){
-        plot <- generateScatterplot(data_filtered, input)
+        generateScatterplot(data1$data, input)
       } else if(input$plotType == "Multiple Scatterplot"){
         req(input$x_column2)
-        plot <- generateMultipleScatterplot(data_filtered, input)
+        generateMultipleScatterplot(data1$data, input)
       } else if(input$plotType == "Boxplot"){
         req(input$x_column2)
-        plot <- generateBoxplot(data_filtered, input)
+        generateBoxplot(data1$data, input)
       }
       ggsave(file, plot,scale = 1, width = input$plot_width,height = input$plot_height)
     }
