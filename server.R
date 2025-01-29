@@ -24,24 +24,17 @@ shinyServer(function(input, output, session) {
     # If there is no input in the text box, make the title the name of the column
     if(input$x_title == ""){
       x = input$x_column
-    } else {
-      # Otherwise, make it the text entered
-      x = input$x_title
-    }
+    } else { x = input$x_title } # Otherwise, make it the text entered 
+    
     # If there is no input in the text box, make the title the name of the column
     if(input$y_title == ""){
       y = input$y_column
-    } else {
-      # Otherwise, make it the text entered
-      y = input$y_title
-    }
+    } else { y = input$y_title }
+    
     # If there is no input in the text box, make the title the name of the column
     if(input$legend_title == ""){
       legend = input$color_data
-    } else {
-      # Otherwise, make it the text entered
-      legend = input$legend_title
-    }
+    } else { legend = input$legend_title }
     
     # Plotting Data
     plot <- plot + labs(x = x, y = y, title = input$plot_title, colour = legend) +
@@ -56,7 +49,6 @@ shinyServer(function(input, output, session) {
         plot.background = element_rect(fill = input$background_color),
         panel.background = element_rect(fill = input$panel_color),
       ) +
-      geom_point(size = input$point_size) + 
       ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
     
     # Adding an outline or not
@@ -83,12 +75,8 @@ shinyServer(function(input, output, session) {
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())
     }
-    
-    
+  
     return(plot)
-    
-    
-    
   }
   
   # This observe event watches for when the file is uploaded and executes
@@ -116,8 +104,7 @@ shinyServer(function(input, output, session) {
     update_ui_components()
   })
   
-  
-
+  # Check if the color boolean changes
   observeEvent(input$color_boolean, {
     data1$data <- process_data(skip = input$skip,sheet = input$sheet)
     # Updating the input nodes on the screen to be the names of the columns
@@ -139,7 +126,6 @@ shinyServer(function(input, output, session) {
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
       x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
       x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
-      
     } else if(input$plotType == "Boxplot"){
       print("Boxplot")
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2)])
@@ -160,7 +146,6 @@ shinyServer(function(input, output, session) {
 
   # Update ranges everytime these change for the y axis
   observeEvent(toListenY(), {
-
       req(data1$data)  # Ensure data is available
       req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
 
@@ -221,10 +206,10 @@ shinyServer(function(input, output, session) {
     # Adding a regression line
     if(input$regression_boolean){ plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color) }
     
+    # Adding general plots
     plot <- set_plot_elements(plot)
     
     return(plot)
-    
   }
 
  
@@ -234,58 +219,31 @@ shinyServer(function(input, output, session) {
   # Function for generating the plot that is called later in the script
   generateMultipleScatterplot <- function(data_filtered, input) {
     
-    # Changing the label of the x and y axis
-    # If there is no input in the text box, make the title the name of the column
-    if(input$x_title == ""){
-      x = input$x_column
-    } else {
-      # Otherwise, make it the text entered
-      x = input$x_title
-    }
-    # If there is no input in the text box, make the title the name of the column
-    if(input$y_title == ""){
-      y = input$y_column
-    } else {
-      # Otherwise, make it the text entered
-      y = input$y_title
-    }
-    # If there is no input in the text box, make the title the name of the column
-    if(input$legend_title == ""){
-      legend = input$x_column
-    } else {
-      # Otherwise, make it the text entered
-      legend = input$legend_title
-    }
-    
-    
     # Making the first data frame to hold the info from the first item
     data1_filtered <- data.frame(
       x_data <- data1$data[,input$x_column],
       y_data <- data1$data[,input$y_column]
       )
   
-    
     # Doesn't like when the columns are named the same thing
     if(input$x_column == input$y_column){
       # Renaming the x column and getting rid of NAs
       data1_filtered <- data1_filtered %>%
         rename(x_data = input$x_column) %>%
-        rename(y_data = paste0(input$y_column,".1")) 
+        rename(y_data = paste0(input$y_column,".1"))
     } else{
       # Renaming the x column and getting rid of NAs
       data1_filtered <- data1_filtered %>%
         rename(x_data = input$x_column) %>%
         rename(y_data = paste0(input$y_column))
     }
-    
-    
+
     # Making the second data frame
     data2_filtered <- data.frame(
       x_data <- data1$data[,input$x_column2],
       y_data <- data1$data[,input$y_column]
     )
     
-  
     # Doesn't like when the columns are named the same thing
     if(input$x_column2 == input$y_column){
       # Renaming the x column and getting rid of NAs
@@ -299,7 +257,6 @@ shinyServer(function(input, output, session) {
         rename(y_data = paste0(input$y_column))
     }
     
-  
     # Adding types for the titles
     if(input$multiple_condition_title1 == ""){
       data1_filtered$type <- input$x_column
@@ -312,7 +269,6 @@ shinyServer(function(input, output, session) {
       data2_filtered$type <- input$multiple_condition_title2
     }
 
-    
     # Combining the data frames
     combined_data <- rbind(data1_filtered,data2_filtered)
     
@@ -330,37 +286,19 @@ shinyServer(function(input, output, session) {
                                          "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
                                          "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
                                          "Filled Triangle Point-Down Blue") == input$shapes2) - 1
-      
 
-      
-      
-      
-      
+      # Making actual plot
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, lty = type)) +
         geom_point(size = input$point_size, aes(shape = type)) +
-        scale_shape_manual(values = c(shape_index1,shape_index2))+
-        labs(x = x, y = y, title = input$plot_title) +
-        theme(legend.background = element_rect(fill = input$legend_background),
-              text = element_text(family = input$Font),
-              panel.border = element_rect(color = input$outline_color),
-              plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color))
+        scale_shape_manual(values = c(shape_index1,shape_index2))
     }
     
-
     # Baseline plot for all the stuff needed for all conditions COLOR ONLY
     if(input$multiple_color == "Color"){
         plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
         geom_point(size = input$point_size) +
-        labs(x = x, y = y, title = input$plot_title) +
-        scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) +
-        theme(legend.background = element_rect(fill = input$legend_background),
-              text = element_text(family = input$Font),
-              panel.border = element_rect(color = input$outline_color),
-              plot.background = element_rect(fill = input$background_color),
-              panel.background = element_rect(fill = input$panel_color))
+        scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) 
     }
-    
     
     # Adjusting the position of the legend
     if(input$legend_position != "normal"){
@@ -376,59 +314,10 @@ shinyServer(function(input, output, session) {
       }
     }
       
+    # Adding general plots
+    plot <- set_plot_elements(plot)
     
-    # Overriding axes bound
-    # if(input$override_axes){
-    #   plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
-    # } else {
-      plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
-      # print(paste0(input$y_axis_min,input$y_axis_max))
-    # }
-    
-    
-    # Adding an outline or not
-    if(input$outline_boolean){
-      # Add outline to the plot
-      plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))
-    } 
-    
-    
-    # Plotting Data
-    plot <- plot  +
-      labs(x = x, y = y, title = input$plot_title, colour = legend, shape = legend) +
-      theme(
-        # legend.position = "none",
-        plot.title = element_text(size=20),
-        axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
-        axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-        axis.text.x = element_text(size = input$num_size, face = "bold"),  # Increase size of x-axis numbers
-        axis.text.y = element_text(size = input$num_size, face = "bold"),  # Increase size of y-axis numbers
-      ) 
-    
-  
-    # Plotting in case there are gridlines
-    if (input$gridlines && input$minor_gridlines) {
-       plot +
-        theme(panel.grid.major = element_line(color = input$major_gridline_color),
-              panel.grid.minor = element_line(color = input$minor_gridline_color)
-              )
-      # Condition where you only want minor gridlines
-    } else if(!input$gridlines && input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_line(color = input$minor_gridline_color)
-              )
-      # Condition where you only want major gridlines
-    } else if(input$gridlines && !input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_line(color = input$major_gridline_color),
-              panel.grid.minor = element_blank())
-      # Condition where you want neither
-    } else if(!input$gridlines && !input$minor_gridlines) {
-      plot +
-        theme(panel.grid.major = element_blank(),
-              panel.grid.minor = element_blank())
-    }
+    return(plot)
   }
   
 
