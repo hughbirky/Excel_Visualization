@@ -18,54 +18,6 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
     updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
     updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
-
-
-    # ######################################################################################################
-    # ######################################################################################################
-    # # In case you want to make multiple that quickly update between and don't have to change every time
-    # updateTextInput(session, "multiple_condition_title1", value = "Auditory only")
-    # updateTextInput(session, "multiple_condition_title2", value = "Auditory + text")
-    # updateTextInput(session, "x_title", value = "Orthographic condition")
-    # updateTextInput(session, "x_title", value = " ")
-    # 
-    # 
-    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "Z_withinpart_AO")
-    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "Z_withinpart_AT")
-    # updateTextInput(session, "y_title", value = "Reaction times (z-scores, wintin participant)")
-    # updateNumericInput(session, "y_axis_min", value = -1)
-    # updateNumericInput(session, "y_axis_max", value = 1)
-    # 
-    
-    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "aprime_AO")
-    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "aprime_AT")
-    # updateTextInput(session, "y_title", value = "Sensitivity (A’)")
-    # updateNumericInput(session, "y_axis_min", value = 0)
-    # updateNumericInput(session, "y_axis_max", value = 1)
-    
-    
-    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "CR_AO")
-    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "CR_AT")
-    # updateTextInput(session, "y_title", value = "Confidence ratings")
-    # updateNumericInput(session, "y_axis_min", value = 0)
-    # updateNumericInput(session, "y_axis_max", value = 100)
-    
-    
-    
-    
-    
-    
-    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "aprimeAO")
-    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "aprimeAT")
-    # updateTextInput(session, "y_title", value = "Sensitivity (A’)")
-    # updateNumericInput(session, "y_axis_min", value = 0)
-    # updateNumericInput(session, "y_axis_max", value = 1)
-    
-    
-    # updateSelectInput(session, "x_column", choices = names(data1$data), selected = "FA_AT_Rat")
-    # updateSelectInput(session, "x_column2", choices = names(data1$data), selected = "FA_AT_Rat1_A")
-    # updateTextInput(session, "y_title", value = "Confidence ratings")
-    # updateNumericInput(session, "y_axis_min", value = 0)
-    # updateNumericInput(session, "y_axis_max", value = 100)
   })
   
 
@@ -100,7 +52,13 @@ shinyServer(function(input, output, session) {
       x_min1 <- vector(length = 2)
 
       # Filtering Data
-      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+      if(input$plotType == "Multiple Scatterplot"){
+        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+      } else if(input$plotType == "Boxplot"){
+        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2)])
+      } else{
+        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$y_column)])
+      }
 
 
       # Finding the min and max of the x and y columns
@@ -126,8 +84,13 @@ shinyServer(function(input, output, session) {
       req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
 
       # Filtering Data
-      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-
+      if(input$plotType == "Multiple Scatterplot"){
+        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+      } else if(input$plotType == "Boxplot"){
+        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2)])
+      } else{
+        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$y_column)])
+      }
 
       # Finding the min and max of the x and y column
       y_max <- max(data1[[input$y_column]], na.rm = TRUE)
@@ -624,10 +587,6 @@ shinyServer(function(input, output, session) {
         axis.title.y = element_text(angle = 90, vjust = 0.5,size = 50),
         axis.text.x = element_text(size = 50),  # Increase size of x-axis numbers
         axis.text.y = element_text(size = 50),  # Increase size of y-axis numbers
-        # axis.title.x = element_text(angle = 0, hjust = 0.5,size = input$axes_size),
-        # axis.title.y = element_text(angle = 90, vjust = 0.5,size = input$axes_size),
-        # axis.text.x = element_text(size = input$num_size),  # Increase size of x-axis numbers
-        # axis.text.y = element_text(size = input$num_size),  # Increase size of y-axis numbers
         text = element_text(family = input$Font),
         # legend.title = element_text(input$legend_title)
         # plot.border = element_rect(color = "black",size = 1)  # Border around the plot
@@ -663,23 +622,7 @@ shinyServer(function(input, output, session) {
     }
   }
   
-  
-  # #########################################################################
-  # #########################################################################
-  # # Facet Grid function
-  # # Function for generating the plot that is called later in the script
 
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
   # This actually outputs the plot
   output$plot <- renderPlot({
     

@@ -18,7 +18,7 @@ shinyUI(fluidPage(
                   
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
-                              choices = c("Scatterplot","Multiple Scatterplot","Boxplot", "Facet Grid"),
+                              choices = c("Scatterplot","Multiple Scatterplot","Boxplot"),
                              selected = "Scatterplot"),
                  
                  conditionalPanel(
