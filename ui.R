@@ -13,6 +13,9 @@ shinyUI(fluidPage(
         
         # Tab1 : Plot Settings
         tabPanel("Data Import",
+                 # Input: Skip rows
+                 numericInput("skip", "Skip Rows? DO BEFORE CHOOSING FILE",value = 0),
+                 
                  # Input: Select a file
                  fileInput("file1", "Choose xlsx File", accept = c(".xlsx")),
                  
@@ -21,8 +24,6 @@ shinyUI(fluidPage(
                              choices = 1,
                              selected = 1),
                   
-                 numericInput("skip", "Skip Rows?",value = 0),
-                 
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot"),

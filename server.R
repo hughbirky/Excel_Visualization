@@ -8,6 +8,9 @@ shinyServer(function(input, output, session) {
   process_data <- function(skip = 0, sheet = NULL) {
     req(input$file1)
     data <- read_excel(input$file1$datapath, sheet = sheet, skip = skip) %>% select(where(is.numeric))
+    colnames(data) <- gsub(" ", "_", colnames(data))  # Replace spaces with underscores
+    colnames(data) <- gsub("\\(|\\)|\\%", "", colnames(data))
+    # print(colnames(data))
     return(data)
   }
   
@@ -245,8 +248,8 @@ shinyServer(function(input, output, session) {
       # Getting rid of NA values
       data_filtered <-na.omit(data_filtered)
       
+      
       # Changing column names
-      colnames(data_filtered) <- gsub(" ", "_", colnames(data_filtered))  # Replace spaces with underscores
       # Plotting when no color included
       plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
         geom_point(size = input$point_size, color = input$point_color)
@@ -259,8 +262,6 @@ shinyServer(function(input, output, session) {
         select(input$x_column,input$y_column,input$color_data)
       # Getting rid of NA values
       data_filtered <-na.omit(data_filtered)
-      # Changing column names
-      colnames(data_filtered) <- gsub(" ", "_", colnames(data_filtered))  # Replace spaces with underscores
       # Plotting for color included
       plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
         # This sets the colors used for the continuous color scale
@@ -303,8 +304,7 @@ shinyServer(function(input, output, session) {
                                          "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
                                          "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
                                          "Filled Triangle Point-Down Blue") == input$shapes2) - 1
-      # Changing column names
-      colnames(combined_data) <- gsub(" ", "_", colnames(combined_data))  # Replace spaces with underscores
+      
       # Making actual plot
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, lty = type)) +
         geom_point(size = input$point_size, aes(shape = type)) +
@@ -313,8 +313,7 @@ shinyServer(function(input, output, session) {
     
     # Baseline plot for all the stuff needed for all conditions COLOR ONLY
     if(input$multiple_color == "Color"){
-      # Changing column names
-      colnames(combined_data) <- gsub(" ", "_", colnames(combined_data))  # Replace spaces with underscores
+      
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
         geom_point(size = input$point_size) +
         scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) 
@@ -354,8 +353,8 @@ shinyServer(function(input, output, session) {
     } else{
       boxplot_outlier_shape = 1
     }
-    # Changing column names
-    colnames(combined_data) <- gsub(" ", "_", colnames(combined_data))  # Replace spaces with underscores
+
+    
     # Baseline plot for all the stuff needed for all conditions
     plot <- ggplot(combined_data, aes(x = type, y = x_data, fill = type)) +
       geom_boxplot(outlier.shape = boxplot_outlier_shape) +
