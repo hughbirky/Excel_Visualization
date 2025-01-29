@@ -4,21 +4,60 @@ shinyServer(function(input, output, session) {
   # We want a reactive expression here in order to return the data from the spreadsheet
   data1 <- reactiveValues(data = NULL)
   
+  # Function to read and process data
+  process_data <- function(skip = 0, sheet = NULL) {
+    req(input$file1)
+    data <- read_excel(input$file1$datapath, sheet = sheet, skip = skip) %>% select(where(is.numeric))
+    return(data)
+  }
+  
+  
+  
   # This observe event watches for when the file is uploaded and executes
   observeEvent(input$file1, {
     # This requires the file to exist before executing
     req(input$file1)
     # Assigns the input data to our reactive value
-    data1$data <- read_excel(input$file1$datapath)
+    data1$data <- read_excel(input$file1$datapath,skip = input$skip)
     # Filters the columns that only contain numeric values
     data1$data <- data1$data %>% select(where(is.numeric))
     
+    # Get all sheet names in the uploaded file
+    sheet_names <- excel_sheets(input$file1$datapath)
+    
+    # Update the selectInput with sheet names
+    updateSelectInput(session, "sheet", choices = sheet_names, selected = sheet_names[1])
     
     # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
     updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
     updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
   })
+  
+  # Changing the sheet if need be
+  observeEvent(input$sheet, {
+    req(input$file1)
+    data1$data <- read_excel(input$file1$datapath,sheet = input$sheet)
+    data1$data <- data1$data %>% select(where(is.numeric))
+
+    # Updating the input nodes on the screen to be the names of the columns
+    updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
+    updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
+    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
+  })
+  
+  # Changing the sheet if need be
+  observeEvent(input$skip, {
+    req(input$file1)
+    data1$data <- read_excel(input$file1$datapath,sheet = input$sheet,skip = input$skip)
+    data1$data <- data1$data %>% select(where(is.numeric))
+
+    # Updating the input nodes on the screen to be the names of the columns
+    updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
+    updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
+    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
+  })
+  
   
 
   observeEvent(input$color_boolean, {
@@ -31,6 +70,7 @@ shinyServer(function(input, output, session) {
     
     # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "color_data", choices = names(data1$data))
+    
   })
   
   
@@ -176,27 +216,16 @@ shinyServer(function(input, output, session) {
       }
     }
     
-    
     # Adding a regression line
     if(input$regression_boolean){
       plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color)
     }
     
     # Overriding axes bound
-    # if(input$override_axes){
-    #   plot <- plot + ylim(input$override_y[1],input$override_y[2]) + xlim(input$override_x[1],input$override_x[2])
-    # } else {
     plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max)
-    # print(paste0(input$y_axis_min,input$y_axis_max))
-    # }
-    
-    
-    
+
     # Adding an outline or not
-    if(input$outline_boolean){
-      # Add outline to the plot
-      plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))
-    } 
+    if(input$outline_boolean){plot <- plot + theme(panel.border = element_rect(color = input$outline_color,fill = NA))} 
     
     # Plotting Data
     plot <- plot  +

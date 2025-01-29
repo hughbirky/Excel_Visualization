@@ -15,7 +15,14 @@ shinyUI(fluidPage(
         tabPanel("Data Import",
                  # Input: Select a file
                  fileInput("file1", "Choose xlsx File", accept = c(".xlsx")),
+                 
+                 # Selecting which sheet you want
+                 selectInput("sheet", label = "Sheet to Use",
+                             choices = 1,
+                             selected = 1),
                   
+                 numericInput("skip", "Skip Rows?",value = 0),
+                 
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
                               choices = c("Scatterplot","Multiple Scatterplot","Boxplot"),
@@ -251,10 +258,11 @@ shinyUI(fluidPage(
                    ),
                    # Panel for the axes hiding
                    conditionalPanel(
-                     condition = "input.color_boolean || input.plotType = 'Multiple Scatterplot' || input.plotType = 'Boxplot'",
-                     colourInput("legend_background", "Legend Background Color", value = "white")
+                     condition = "(input.color_boolean && input.plotType == 'Scatterplot') || (input.plotType == 'Multiple Scatterplot') || (input.plotType == 'Boxplot')",
+                     colourInput("legend_background", "Legend Background Color", "white")
                    ),
                  )
+                 
         ),
         
         
@@ -271,7 +279,7 @@ shinyUI(fluidPage(
                  
                  # Panel for the axes hiding
                  conditionalPanel(
-                   condition = "input.color_boolean == TRUE && input.plotType == 'Scatterplot' || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
+                   condition = "(input.color_boolean == TRUE && input.plotType == 'Scatterplot') || input.plotType == 'Multiple Scatterplot' || input.plotType == 'Boxplot'",
                    textInput("legend_title", label = "Legend Title", value = "")
                  ),
                  
