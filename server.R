@@ -11,110 +11,89 @@ shinyServer(function(input, output, session) {
     return(data)
   }
   
+  # Function to update UI Components from sheet
+  update_ui_components <- function() {
+    updateSelectInput(session, "x_column", choices = names(data1$data), selected = names(data1$data)[1])
+    updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
+    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
+  }
+  
   
   
   # This observe event watches for when the file is uploaded and executes
   observeEvent(input$file1, {
-    # This requires the file to exist before executing
-    req(input$file1)
-    # Assigns the input data to our reactive value
-    data1$data <- read_excel(input$file1$datapath,skip = input$skip)
-    # Filters the columns that only contain numeric values
-    data1$data <- data1$data %>% select(where(is.numeric))
-    
+    # Process data
+    data1$data <- process_data(input$skip)
     # Get all sheet names in the uploaded file
     sheet_names <- excel_sheets(input$file1$datapath)
-    
     # Update the selectInput with sheet names
     updateSelectInput(session, "sheet", choices = sheet_names, selected = sheet_names[1])
-    
-    # Updating the input nodes on the screen to be the names of the columns
-    updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
-    updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
-    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
+    update_ui_components()
   })
   
   # Changing the sheet if need be
   observeEvent(input$sheet, {
-    req(input$file1)
-    data1$data <- read_excel(input$file1$datapath,sheet = input$sheet)
-    data1$data <- data1$data %>% select(where(is.numeric))
-
+    data1$data <- process_data(skip = input$skip,sheet = input$sheet)
     # Updating the input nodes on the screen to be the names of the columns
-    updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
-    updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
-    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
+    update_ui_components()
   })
   
   # Changing the sheet if need be
   observeEvent(input$skip, {
-    req(input$file1)
-    data1$data <- read_excel(input$file1$datapath,sheet = input$sheet,skip = input$skip)
-    data1$data <- data1$data %>% select(where(is.numeric))
-
+    data1$data <- process_data(skip = input$skip,sheet = input$sheet)
     # Updating the input nodes on the screen to be the names of the columns
-    updateSelectInput(session, "x_column", choices = names(data1$data),selected = names(data1$data)[1])
-    updateSelectInput(session, "y_column", choices = names(data1$data), selected = names(data1$data)[2])
-    updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
+    update_ui_components()
   })
   
   
 
   observeEvent(input$color_boolean, {
-    # This requires the file to exist before executing
-    req(input$file1)
-    # Assigns the input data to our reactive value
-    data1$data <- read_excel(input$file1$datapath)
-    # Filters the columns that only contain numeric values
-    data1$data <- data1$data %>% select(where(is.numeric))
-    
+    data1$data <- process_data(skip = input$skip,sheet = input$sheet)
     # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "color_data", choices = names(data1$data))
     
   })
   
-  
   # Checking to see if any of the values have changed
-  toListenX <- reactive({
-    list(input$x_column,input$x_column2)
-  })
-  toListenY <- reactive({
-    list(input$y_column)
-  })
-  
+  toListenX <- reactive({ list(input$x_column,input$x_column2) })
+  toListenY <- reactive({ list(input$y_column) })
   
   # Update ranges every time these change for the x axis
   observeEvent(toListenX(), {
 
-      req(data1$data)  # Ensure data is available
-      req(input$x_column, input$y_column)  # Ensure x_column and y_column are selected
-      x_max1 <- vector(length = 2)
-      x_min1 <- vector(length = 2)
+    req(data1$data,input$x_column, input$y_column)  # Ensure x_column and y_column are selected
 
-      # Filtering Data
-      if(input$plotType == "Multiple Scatterplot"){
-        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
-      } else if(input$plotType == "Boxplot"){
-        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2)])
-      } else{
-        data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$y_column)])
-      }
-
-
-      # Finding the min and max of the x and y columns
-      x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
-      x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
-      x_max <- max(x_max1)
-      x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
-      x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
-      x_min <- min(x_min1)
-
-
-
-      updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
-      updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
-      updateSliderInput(session, "override_x", max = x_max, min = x_min, value = c(x_min, x_max))
-  })
+    
+    # Finding the min and max of the x and y columns
+    # x_max1[1] <- max(data1[[input$x_column]], na.rm = TRUE)
+    # x_max1[2] <- max(data1[[input$x_column2]], na.rm = TRUE)
+    # 
+    # x_min1[1] <- min(data1[[input$x_column]], na.rm = TRUE)
+    # x_min1[2] <- min(data1[[input$x_column2]], na.rm = TRUE)
+    if(input$plotType == "Multiple Scatterplot"){
+      print("Multiple Scatterplot")
+      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
+      x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
+      x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
+      
+    } else if(input$plotType == "Boxplot"){
+      print("Boxplot")
+      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2)])
+      x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
+      x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
+    } else if(input$plotType == "Scatterplot"){
+      print("Scatterplot")
+      data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$y_column)])
+      x_min <- min(data1[[input$x_column]], na.rm = TRUE)
+      x_max <- max(data1[[input$x_column]], na.rm = TRUE)
+      print(paste0((x_min), " - ", x_max))
+    }
+    # x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]))
+    # x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]))
+  
+    updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
+    updateNumericInput(session = session, inputId = "x_axis_max", value = x_max)
+})
 
 
   # Update ranges everytime these change for the y axis
