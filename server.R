@@ -64,22 +64,22 @@ shinyServer(function(input, output, session) {
     
     # Plotting in case there are gridlines
     if (input$gridlines && input$minor_gridlines) {
-      plot +
+      plot <- plot +
         theme(panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_line(color = input$minor_gridline_color))
       # Condition where you only want minor gridlines
     } else if(!input$gridlines && input$minor_gridlines) {
-      plot +
+      plot <- plot +
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_line(color = input$minor_gridline_color))
       # Condition where you only want major gridlines
     } else if(input$gridlines && !input$minor_gridlines) {
-      plot +
+      plot <- plot +
         theme(panel.grid.major = element_line(color = input$major_gridline_color),
               panel.grid.minor = element_blank())
       # Condition where you want neither
     } else if(!input$gridlines && !input$minor_gridlines) {
-      plot +
+      plot <- plot +
         theme(panel.grid.major = element_blank(),
               panel.grid.minor = element_blank())
     }
@@ -195,7 +195,10 @@ shinyServer(function(input, output, session) {
       # Getting rid of NA values
       data_filtered <-na.omit(data_filtered)
       # Plotting when no color included
-      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column))
+      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
+        geom_point(size = input$point_size, color = input$point_color)
+        
+        
     } else {
       # Filters the data fram to only have the columns we want from the select input
       req(input$color_data)
