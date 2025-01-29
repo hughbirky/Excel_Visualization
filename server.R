@@ -18,6 +18,66 @@ shinyServer(function(input, output, session) {
     updateSelectInput(session, "x_column2", choices = names(data1$data), selected = names(data1$data)[3])
   }
   
+  # Function for making data long form
+  long_form <- function(){
+    # Making the first data frame to hold the info from the first item
+    data1_filtered <- data.frame(
+      x_data <- data1$data[,input$x_column],
+      y_data <- data1$data[,input$y_column]
+    )
+    
+    # Doesn't like when the columns are named the same thing
+    if(input$x_column == input$y_column){
+      # Renaming the x column and getting rid of NAs
+      data1_filtered <- data1_filtered %>%
+        rename(x_data = input$x_column) %>%
+        rename(y_data = paste0(input$y_column,".1")) 
+    } else{
+      # Renaming the x column and getting rid of NAs
+      data1_filtered <- data1_filtered %>%
+        rename(x_data = input$x_column) %>%
+        rename(y_data = paste0(input$y_column))
+    }
+    
+    # Making the second data frame
+    data2_filtered <- data.frame(
+      x_data <- data1$data[,input$x_column2],
+      y_data <- data1$data[,input$y_column]
+    )
+    
+    # Doesn't like when the columns are named the same thing
+    if(input$x_column2 == input$y_column){
+      # Renaming the x column and getting rid of NAs
+      data2_filtered <- data2_filtered %>%
+        rename(x_data = input$x_column2) %>%
+        rename(y_data = paste0(input$y_column,".1")) 
+    } else{
+      # Renaming the x column and getting rid of NAs
+      data2_filtered <- data2_filtered %>%
+        rename(x_data = input$x_column2) %>%
+        rename(y_data = paste0(input$y_column))
+    }
+    
+    # Adding types for the titles
+    if(input$multiple_condition_title1 == ""){
+      data1_filtered$type <- input$x_column
+    } else{
+      data1_filtered$type <- input$multiple_condition_title1
+    }
+    if(input$multiple_condition_title2 == ""){
+      data2_filtered$type <- input$x_column2
+    } else{
+      data2_filtered$type <- input$multiple_condition_title2
+    }
+    
+    # Combining the data frames
+    combined_data <- rbind(data1_filtered,data2_filtered)
+    
+    return(combined_data)
+    
+  }
+
+  
   # Function for setting other plot elements
   set_plot_elements <- function(plot) {
     # Changing the label of the x and y axis
@@ -223,61 +283,9 @@ shinyServer(function(input, output, session) {
   # Multiple Scatterplot function
   # Function for generating the plot that is called later in the script
   generateMultipleScatterplot <- function(data_filtered, input) {
-    
-    # Making the first data frame to hold the info from the first item
-    data1_filtered <- data.frame(
-      x_data <- data1$data[,input$x_column],
-      y_data <- data1$data[,input$y_column]
-      )
-  
-    # Doesn't like when the columns are named the same thing
-    if(input$x_column == input$y_column){
-      # Renaming the x column and getting rid of NAs
-      data1_filtered <- data1_filtered %>%
-        rename(x_data = input$x_column) %>%
-        rename(y_data = paste0(input$y_column,".1"))
-    } else{
-      # Renaming the x column and getting rid of NAs
-      data1_filtered <- data1_filtered %>%
-        rename(x_data = input$x_column) %>%
-        rename(y_data = paste0(input$y_column))
-    }
-
-    # Making the second data frame
-    data2_filtered <- data.frame(
-      x_data <- data1$data[,input$x_column2],
-      y_data <- data1$data[,input$y_column]
-    )
-    
-    # Doesn't like when the columns are named the same thing
-    if(input$x_column2 == input$y_column){
-      # Renaming the x column and getting rid of NAs
-      data2_filtered <- data2_filtered %>%
-        rename(x_data = input$x_column2) %>%
-        rename(y_data = paste0(input$y_column,".1")) 
-    } else{
-      # Renaming the x column and getting rid of NAs
-      data2_filtered <- data2_filtered %>%
-        rename(x_data = input$x_column2) %>%
-        rename(y_data = paste0(input$y_column))
-    }
-    
-    # Adding types for the titles
-    if(input$multiple_condition_title1 == ""){
-      data1_filtered$type <- input$x_column
-    } else{
-      data1_filtered$type <- input$multiple_condition_title1
-    }
-    if(input$multiple_condition_title2 == ""){
-      data2_filtered$type <- input$x_column2
-    } else{
-      data2_filtered$type <- input$multiple_condition_title2
-    }
-
     # Combining the data frames
-    combined_data <- rbind(data1_filtered,data2_filtered)
+    combined_data <- long_form()
     
-
     # Baseline plot for all the stuff needed for all conditions SHAPE ONLY
     if(input$multiple_color == "Shapes"){
       # Getting the index number of the shape selected
@@ -331,58 +339,8 @@ shinyServer(function(input, output, session) {
   # Boxplot function
   # Function for generating the plot that is called later in the script
   generateBoxplot <- function(data_filtered, input) {
-    # Making the first data frame to hold the info from the first item
-    data1_filtered <- data.frame(
-      x_data <- data1$data[,input$x_column],
-      y_data <- data1$data[,input$y_column]
-    )
-    
-    # Doesn't like when the columns are named the same thing
-    if(input$x_column == input$y_column){
-      # Renaming the x column and getting rid of NAs
-      data1_filtered <- data1_filtered %>%
-        rename(x_data = input$x_column) %>%
-        rename(y_data = paste0(input$y_column,".1")) 
-    } else{
-      # Renaming the x column and getting rid of NAs
-      data1_filtered <- data1_filtered %>%
-        rename(x_data = input$x_column) %>%
-        rename(y_data = paste0(input$y_column))
-    }
-    
-    # Making the second data frame
-    data2_filtered <- data.frame(
-      x_data <- data1$data[,input$x_column2],
-      y_data <- data1$data[,input$y_column]
-    )
-    
-    # Doesn't like when the columns are named the same thing
-    if(input$x_column2 == input$y_column){
-      # Renaming the x column and getting rid of NAs
-      data2_filtered <- data2_filtered %>%
-        rename(x_data = input$x_column2) %>%
-        rename(y_data = paste0(input$y_column,".1")) 
-    } else{
-      # Renaming the x column and getting rid of NAs
-      data2_filtered <- data2_filtered %>%
-        rename(x_data = input$x_column2) %>%
-        rename(y_data = paste0(input$y_column))
-    }
-    
-    # Adding types for the titles
-    if(input$multiple_condition_title1 == ""){
-      data1_filtered$type <- input$x_column
-    } else{
-      data1_filtered$type <- input$multiple_condition_title1
-    }
-    if(input$multiple_condition_title2 == ""){
-      data2_filtered$type <- input$x_column2
-    } else{
-      data2_filtered$type <- input$multiple_condition_title2
-    }
-    
-    # Combining the data frames
-    combined_data <- rbind(data1_filtered,data2_filtered)
+    # Getting the data in long form
+    combined_data <- long_form()
     
     if(input$boxplot_individual_points_bool){
       boxplot_outlier_shape = NA
@@ -394,7 +352,6 @@ shinyServer(function(input, output, session) {
     plot <- ggplot(combined_data, aes(x = type, y = x_data, fill = type)) +
       geom_boxplot(outlier.shape = boxplot_outlier_shape) +
       scale_x_discrete(labels = c("A","B"))
-      
       
     # Adding individual points
     if(input$boxplot_individual_points_bool){
@@ -413,8 +370,6 @@ shinyServer(function(input, output, session) {
       # Add outline to the plot
       plot <- plot + stat_summary(fun = mean, geom="point", shape=8, size=4, color="black", fill="black",stroke = 2)  # Add star for mean
     } 
-
-    
     
     # Adding general plots
     plot <- set_plot_elements(plot)
@@ -454,9 +409,7 @@ shinyServer(function(input, output, session) {
       generateFacetGrid(data_filtered, input)
     }
   })
-  
-  
-  
+
   # Downloading the plot
   output$save_graph <- downloadHandler(
     # Generating generic file name for the initial spot
@@ -467,7 +420,6 @@ shinyServer(function(input, output, session) {
     # Generating the content needed to save the file
     content = function(file) {
       req(data1$data,input$y_column,input$x_column)
-      
       if(input$plotType == "Scatterplot"){
         generateScatterplot(data1$data, input)
       } else if(input$plotType == "Multiple Scatterplot"){
