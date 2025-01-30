@@ -150,7 +150,7 @@ shinyUI(fluidPage(
         tabPanel("Plot Settings",
                  # Select inputs for the points on the plot
                  # Select point size
-                 sliderInput("point_size", "Point Size", value = 1, min = 0.01, max = 5),
+                 sliderInput("point_size", "Point Size", value = 2, min = 0.01, max = 5),
                  
                  # Checkbox for gridlines
                  checkboxInput("gridlines", "Show Major Gridlines", value = F),
@@ -178,9 +178,9 @@ shinyUI(fluidPage(
             
                  
                  # Select axes size
-                 sliderInput("axes_size", "Axes Size", value = 10, min = 1, max = 30),
+                 sliderInput("axes_size", "Axes Size", value = 15, min = 1, max = 30),
                  # Select numbers size
-                 sliderInput("num_size", "Number Size", value = 10, min = 1, max = 30),
+                 sliderInput("num_size", "Number Size", value = 15, min = 1, max = 30),
                  
                  
         ),

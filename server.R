@@ -264,8 +264,8 @@ shinyServer(function(input, output, session) {
       data_filtered <-na.omit(data_filtered)
       # Plotting for color included
       plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
-        # This sets the colors used for the continuous color scale
-        scale_color_continuous(low = input$data_color1, high = input$data_color2)+ set_plot_elements()
+        geom_point(size = input$point_size) +
+        scale_color_continuous(low = input$data_color1, high = input$data_color2)
       
       # Adjusting the position of the legend
       if(input$legend_position != "normal"){
