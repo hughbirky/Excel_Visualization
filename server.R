@@ -88,6 +88,15 @@ shinyServer(function(input, output, session) {
     if(input$x_title == ""){
       x = input$x_column
     } else { x = input$x_title } # Otherwise, make it the text entered 
+    # If there is no input in the text box, make the title the name of the column
+    if(input$multiple_condition_title1 == ""){
+      con1 = input$x_column
+    } else { con1 = input$multiple_condition_title1 } # Otherwise, make it the text entered 
+    # If there is no input in the text box, make the title the name of the column
+    if(input$multiple_condition_title2 == ""){
+      con2 = input$x_column2
+    } else { con2 = input$multiple_condition_title2 } # Otherwise, make it the text entered 
+
     
     # If there is no input in the text box, make the title the name of the column
     if(input$y_title == ""){
@@ -98,6 +107,9 @@ shinyServer(function(input, output, session) {
     if(input$legend_title == ""){
       legend = as.character(input$color_data)
     } else { legend = input$legend_title }
+    
+    print(paste0(con1, " - ", con2))
+    
     
     # print("We got before")
     # Plotting Data
@@ -113,10 +125,13 @@ shinyServer(function(input, output, session) {
         plot.background = element_rect(fill = input$background_color),
         panel.background = element_rect(fill = input$panel_color),
       ) 
+      
       if(input$plotType != "Boxplot"){
         plot <- plot + ylim(input$y_axis_min,input$y_axis_max) + xlim(input$x_axis_min,input$x_axis_max) 
       } else{
-        plot <- plot + scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend) + ylim(input$y_axis_min,input$y_axis_max)
+        plot <- plot + scale_fill_manual(values = c(input$point_color1, input$point_color2), name = legend) + ylim(input$y_axis_min,input$y_axis_max) +
+          scale_x_discrete(labels = c(con1,con2)) +
+          labs(x = "")
       }
     
     # Adding an outline or not
@@ -196,9 +211,13 @@ shinyServer(function(input, output, session) {
       x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
     } else if(input$plotType == "Boxplot"){
       # print("Boxplot")
+      # print("Before")
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2)])
       x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
       x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
+      # print("After")
+      updateNumericInput(session = session, inputId = "y_axis_min", value = x_min)
+      updateNumericInput(session = session, inputId = "y_axis_max", value = x_max)
     } else if(input$plotType == "Scatterplot"){
       # print("Scatterplot")
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$y_column)])
@@ -357,8 +376,7 @@ shinyServer(function(input, output, session) {
     
     # Baseline plot for all the stuff needed for all conditions
     plot <- ggplot(combined_data, aes(x = type, y = x_data, fill = type)) +
-      geom_boxplot(outlier.shape = boxplot_outlier_shape) +
-      scale_x_discrete(labels = c("A","B"))
+      geom_boxplot(outlier.shape = boxplot_outlier_shape) 
       
     # Adding individual points
     if(input$boxplot_individual_points_bool){
