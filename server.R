@@ -99,7 +99,7 @@ shinyServer(function(input, output, session) {
       legend = as.character(input$color_data)
     } else { legend = input$legend_title }
     
-    print("We got before")
+    # print("We got before")
     # Plotting Data
     plot <- plot + labs(x = x, y = y, title = input$plot_title, colour = legend) +
       theme(
@@ -190,21 +190,21 @@ shinyServer(function(input, output, session) {
     req(data1$data,input$x_column, input$y_column)  # Ensure x_column and y_column are selected
     # Finding the min and max of the x and y columns
     if(input$plotType == "Multiple Scatterplot"){
-      print("Multiple Scatterplot")
+      # print("Multiple Scatterplot")
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2,input$y_column)])
       x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
       x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
     } else if(input$plotType == "Boxplot"){
-      print("Boxplot")
+      # print("Boxplot")
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$x_column2)])
       x_min <- min(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
       x_max <- max(c(data1[[input$x_column]],data1[[input$x_column2]]), na.rm = TRUE)
     } else if(input$plotType == "Scatterplot"){
-      print("Scatterplot")
+      # print("Scatterplot")
       data1 <- na.omit(data1$data[,names(data1$data) %in% c(input$x_column,input$y_column)])
       x_min <- min(data1[[input$x_column]], na.rm = TRUE)
       x_max <- max(data1[[input$x_column]], na.rm = TRUE)
-      print(paste0((x_min), " - ", x_max))
+      # print(paste0((x_min), " - ", x_max))
     }
     # Update x axis
     updateNumericInput(session = session, inputId = "x_axis_min", value = x_min)
@@ -427,14 +427,16 @@ shinyServer(function(input, output, session) {
     # Generating the content needed to save the file
     content = function(file) {
       req(data1$data,input$y_column,input$x_column)
+      
+      plot <- NULL
       if(input$plotType == "Scatterplot"){
-        generateScatterplot(data1$data, input)
+        plot <- generateScatterplot(data1$data, input)
       } else if(input$plotType == "Multiple Scatterplot"){
         req(input$x_column2)
-        generateMultipleScatterplot(data1$data, input)
+        plot <- generateMultipleScatterplot(data1$data, input)
       } else if(input$plotType == "Boxplot"){
         req(input$x_column2)
-        generateBoxplot(data1$data, input)
+        plot <- generateBoxplot(data1$data, input)
       }
       ggsave(file, plot,scale = 1, width = input$plot_width,height = input$plot_height)
     }
