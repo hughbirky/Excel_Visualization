@@ -113,6 +113,10 @@ shinyServer(function(input, output, session) {
     # Combining the data frames
     combined_data <- rbind(data1_filtered,data2_filtered)
     
+    # Making sure order doesn't switch
+    combined_data$type <- factor(combined_data$type, levels = c(data1_filtered$type[1], data2_filtered$type[1]))
+    
+    
     return(combined_data)
     
   }

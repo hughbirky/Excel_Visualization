@@ -5,7 +5,7 @@ account: birkyhm
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 14370277
-bundleId: 10021362
+bundleId: 10114064
 url: https://birkyhm.shinyapps.io/Shiny_Gui/
 version: 1
 asMultiple: FALSE
