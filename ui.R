@@ -300,7 +300,14 @@ shinyUI(fluidPage(
                  # Input for plot height
                  numericInput("plot_height", "Plot Export Height", value = 6),
                  
-                 downloadButton("save_graph","Save Graph")
+                 
+                 # Saving graph
+                 downloadButton("save_graph","Save Graph"),
+                 
+                 # Saving settings
+                 downloadButton("save_settings", "Save Current Settings"),
+                 # Loading Settings
+                 fileInput("load_settings", "Load Saved Settings", accept = ".rds")
           
         )
         
