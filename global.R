@@ -5,6 +5,7 @@ library(ggplot2)
 library(readxl)
 library(shinyWidgets)
 library(colourpicker)
+library(tinytex)
 
 
 # install.packages("shiny")
@@ -14,4 +15,5 @@ library(colourpicker)
 # install.packages("readxl")
 # install.packages("shinyWidgets")
 # install.packages("colourpicker")
+# install.packages("tinytex")
 

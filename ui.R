@@ -14,15 +14,14 @@ shinyUI(fluidPage(
         # Tab1 : Plot Settings
         tabPanel("Data Import",
                  # Input: Skip rows
-                 numericInput("skip", "Skip Rows? DO BEFORE CHOOSING FILE",value = 0),
+                 numericInput("skip", "Skip Rows?",value = 0),
                  
                  # Input: Select a file
                  fileInput("file1", "Choose xlsx File", accept = c(".xlsx")),
                  
                  # Selecting which sheet you want
                  selectInput("sheet", label = "Sheet to Use",
-                             choices = 1,
-                             selected = 1),
+                             choices = NULL),
                   
                  # Selecting which graph type you want
                  selectInput("plotType", label = "Graph Type",
@@ -275,8 +274,8 @@ shinyUI(fluidPage(
                  
                  # Input for axes and title labels
                  textInput("plot_title", label = "Plot Title", value = ""),
-                 textInput("x_title", label = "X Axis Title", value = ""),
                  textInput("y_title", label = "Y Axis Title", value = ""),
+                 textInput("x_title", label = "X Axis Title", value = ""),
                  
                  # Panel for the axes hiding
                  conditionalPanel(

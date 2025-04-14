@@ -1,13 +1,50 @@
 shinyServer(function(input, output, session) {
-  
+  observeEvent(session, {
+    if (is.null(input$file1)) {
+      sheet_names <- excel_sheets("www/Scoring Log.xlsx")
+      default_sheet <- "Baseline"  # Make sure this matches the actual sheet name
+      selected_sheet <- if (default_sheet %in% sheet_names) default_sheet else sheet_names[1]
+      
+      # Update the sheet dropdown first
+      updateSelectInput(session, "sheet", choices = sheet_names, selected = selected_sheet)
+      
+      # Load the data using the default sheet
+      data1$data <- read_excel("www/Scoring Log.xlsx", sheet = selected_sheet, skip = input$skip) %>%
+        select(where(is.numeric)) %>%
+        setNames(gsub(" ", "_", names(.))) %>%
+        setNames(gsub("\\(|\\)|\\%", "", names(.)))
+      
+      # Update column selectors
+      update_ui_components()
+      
+      req(input$sheet)  # Add this line
+      # Process data
+      data1$data <- process_data(input$skip)
+      # Get all sheet names in the uploaded file
+      sheet_names <- excel_sheets(input$file1$datapath)
+      # Update the selectInput with sheet names
+      updateSelectInput(session, "sheet", choices = sheet_names, selected = sheet_names[1])
+      update_ui_components()
+    }
+  })
   
   # We want a reactive expression here in order to return the data from the spreadsheet
   data1 <- reactiveValues(data = NULL)
   
   # Function to read and process data
   process_data <- function(skip = 0, sheet = NULL) {
-    req(input$file1)
-    data <- read_excel(input$file1$datapath, sheet = sheet, skip = skip) %>% select(where(is.numeric))
+    
+    file_path <- if (!is.null(input$file1)) {
+      req(input$file1)
+      input$file1$datapath
+    } else {
+      "www/Scoring Log.xlsx"
+    }
+    # Protecting against null
+    if (is.null(sheet) || sheet == "") return(NULL)
+    
+    data <- read_excel(file_path, sheet = sheet, skip = skip) %>% 
+      select(where(is.numeric))
     colnames(data) <- gsub(" ", "_", colnames(data))  # Replace spaces with underscores
     colnames(data) <- gsub("\\(|\\)|\\%", "", colnames(data))
     # print(colnames(data))
@@ -164,6 +201,8 @@ shinyServer(function(input, output, session) {
   
   # This observe event watches for when the file is uploaded and executes
   observeEvent(input$file1, {
+    
+    req(input$sheet)  # Add this line
     # Process data
     data1$data <- process_data(input$skip)
     # Get all sheet names in the uploaded file
@@ -175,6 +214,7 @@ shinyServer(function(input, output, session) {
   
   # Changing the sheet if need be
   observeEvent(input$sheet, {
+    req(input$sheet)  # Add this line
     data1$data <- process_data(skip = input$skip,sheet = input$sheet)
     # Updating the input nodes on the screen to be the names of the columns
     update_ui_components()
@@ -182,6 +222,7 @@ shinyServer(function(input, output, session) {
   
   # Changing the sheet if need be
   observeEvent(input$skip, {
+    req(input$sheet)  # Add this line
     data1$data <- process_data(skip = input$skip,sheet = input$sheet)
     # Updating the input nodes on the screen to be the names of the columns
     update_ui_components()
@@ -189,6 +230,7 @@ shinyServer(function(input, output, session) {
   
   # Check if the color boolean changes
   observeEvent(input$color_boolean, {
+    req(input$sheet)  # Add this line
     data1$data <- process_data(skip = input$skip,sheet = input$sheet)
     # Updating the input nodes on the screen to be the names of the columns
     updateSelectInput(session, "color_data", choices = names(data1$data))
