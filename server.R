@@ -428,54 +428,60 @@ shinyServer(function(input, output, session) {
   # Multiple Scatterplot function
   # Function for generating the plot that is called later in the script
   generateMultipleScatterplot <- function(data_filtered, input) {
-    # Combining the data frames
     combined_data <- long_form()
     
-    # Baseline plot for all the stuff needed for all conditions SHAPE ONLY
-    if(input$multiple_color == "Shapes"){
-      # Getting the index number of the shape selected
-      shape_index1 = which(c("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
-                                         "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
-                                         "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
-                                         "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
-                                         "Filled Triangle Point-Down Blue") == input$shapes1) - 1
-      shape_index2 = which(c("Square","Circle","Triangle Point Up","Plus","Cross","Diamond","Triangle Point Down","Square Cross",
-                                         "Star","Diamond Plus","Circle Plus","Triangles Up and Down","Square Plus","Circle Cross",
-                                         "Square and Triangle Down","Filled Square","Filled Circle","Filled Triangle Point-Up","Filled Diamond",
-                                         "Solid Circle","Bullet","Filled Circle Blue","Filled Square Blue","Filled Diamond Blue","Filled Triangle Point-Up Blue",
-                                         "Filled Triangle Point-Down Blue") == input$shapes2) - 1
-      
-      # Making actual plot
-      plot <- ggplot(combined_data, aes(x = x_data, y = y_data, lty = type)) +
-        geom_point(size = input$point_size, aes(shape = type)) +
-        scale_shape_manual(values = c(shape_index1,shape_index2), name = input$legend_title)
+    # Color-based condition
+    if (input$multiple_color == "Color") {
+      if (input$point_outline_boolean) {
+        plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
+          geom_point(aes(fill = type), 
+                     shape = 21, 
+                     size = input$point_size,
+                     color = input$point_outline_color) +
+          scale_fill_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title)
+      } else {
+        plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
+          geom_point(aes(color = type), 
+                     size = input$point_size) +
+          scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title)
+      }
     }
     
-    # Baseline plot for all the stuff needed for all conditions COLOR ONLY
-    if(input$multiple_color == "Color"){
+    # Shape-based condition
+    if (input$multiple_color == "Shapes") {
+      shape_index1 <- which(c("Square", "Circle", "Triangle Point Up", "Plus", "Cross", "Diamond", 
+                              "Triangle Point Down", "Square Cross", "Star", "Diamond Plus", "Circle Plus", 
+                              "Triangles Up and Down", "Square Plus", "Circle Cross", "Square and Triangle Down", 
+                              "Filled Square", "Filled Circle", "Filled Triangle Point-Up", "Filled Diamond",
+                              "Solid Circle", "Bullet", "Filled Circle Blue", "Filled Square Blue", 
+                              "Filled Diamond Blue", "Filled Triangle Point-Up Blue", "Filled Triangle Point-Down Blue") 
+                            == input$shapes1) - 1
+      shape_index2 <- which(c("Square", "Circle", "Triangle Point Up", "Plus", "Cross", "Diamond", 
+                              "Triangle Point Down", "Square Cross", "Star", "Diamond Plus", "Circle Plus", 
+                              "Triangles Up and Down", "Square Plus", "Circle Cross", "Square and Triangle Down", 
+                              "Filled Square", "Filled Circle", "Filled Triangle Point-Up", "Filled Diamond",
+                              "Solid Circle", "Bullet", "Filled Circle Blue", "Filled Square Blue", 
+                              "Filled Diamond Blue", "Filled Triangle Point-Up Blue", "Filled Triangle Point-Down Blue") 
+                            == input$shapes2) - 1
       
-      plot <- ggplot(combined_data, aes(x = x_data, y = y_data, color = type)) +
+      plot <- ggplot(combined_data, aes(x = x_data, y = y_data, shape = type)) +
         geom_point(size = input$point_size) +
-        scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title) 
+        scale_shape_manual(values = c(shape_index1, shape_index2), name = input$legend_title)
     }
     
-    # Adjusting the position of the legend
-    if(input$legend_position != "normal"){
+    if (input$legend_position != "normal") {
       plot <- plot + theme(legend.position = input$legend_position)
     }
     
-    # Adding a regression line
-    if(input$regression_boolean){
-      if(input$multiple_color == "Color"){
-        plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se, show.legend = FALSE)
-      } else {
-        plot <- plot + geom_smooth(method = input$regression_method,se = input$regression_se,color = input$regression_color_multiple,fill = input$regression_color_multiple,show.legend = FALSE)
-      }
+    if (input$regression_boolean) {
+      plot <- plot + geom_smooth(method = input$regression_method, 
+                                 se = input$regression_se, 
+                                 show.legend = FALSE,
+                                 color = input$regression_color_multiple,
+                                 fill = input$regression_color_multiple)
     }
-      
-    # Adding general plots
-    plot <- set_plot_elements(plot)
     
+    plot <- set_plot_elements(plot)
     return(plot)
   }
   
