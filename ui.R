@@ -121,11 +121,25 @@ shinyUI(fluidPage(
                    # Panel for Regression Settings
                    conditionalPanel(
                      condition = "input.regression_boolean",
-                     # Selecting which item you want for each column
                      selectInput("regression_method", label = "Regression Type",
-                                 choices = list("lm","glm","gam","loess")),
-                     # Deciding whether or not to choose the confidence interval
-                     checkboxInput("regression_se", "Confidence Interval", value = FALSE)
+                                 choices = list("lm", "glm", "gam", "loess")),
+                     checkboxInput("regression_se", "Confidence Interval", value = FALSE),
+                     
+                     conditionalPanel(
+                       condition = "input.plotType == 'Scatterplot'",
+                       selectInput("regression_linetype", "Regression Line Type",
+                                   choices = c("Solid" = "solid", "Dotted" = "dotted", "Dashed" = "dashed"),
+                                   selected = "solid")
+                     ),
+                     
+                     conditionalPanel(
+                       condition = "input.plotType == 'Multiple Scatterplot'",
+                       selectInput("regression_linetype1", "Regression Line Type (Condition 1)",
+                                   choices = c("Solid" = "solid", "Dotted" = "dotted", "Dashed" = "dashed"), selected = "solid"),
+                       selectInput("regression_linetype2", "Regression Line Type (Condition 2)",
+                                   choices = c("Solid" = "solid", "Dotted" = "dotted", "Dashed" = "dashed"), selected = "dotted")
+                       
+                     )
                    )
                  ),
                  
@@ -263,14 +277,14 @@ shinyUI(fluidPage(
                      
                    ),
                    # Conditional panel for showing the color option for the regression line
-                   conditionalPanel(
-                     condition = "input.regression_boolean && input.plotType != 'Scatterplot'",
-                     
-                     conditionalPanel(
-                       condition = "input.plotType = 'Multiple Scatterplot'",
-                       colourInput("regression_color_multiple", "Regression Color (Set 2)", value = "red"),
-                     )
-                   ),
+                   # conditionalPanel(
+                   #   condition = "input.regression_boolean && input.plotType != 'Scatterplot'",
+                   #   
+                   #   conditionalPanel(
+                   #     condition = "input.plotType = 'Multiple Scatterplot'",
+                   #     colourInput("regression_color_multiple", "Regression Color (Set 2)", value = "red"),
+                   #   )
+                   # ),
                    # Panel for the axes hiding
                    conditionalPanel(
                      condition = "(input.color_boolean && input.plotType == 'Scatterplot') || (input.plotType == 'Multiple Scatterplot') || (input.plotType == 'Boxplot')",

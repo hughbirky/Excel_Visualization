@@ -46,6 +46,9 @@ shinyServer(function(input, output, session) {
       color_data = input$color_data,
       regression_boolean = input$regression_boolean,
       regression_method = input$regression_method,
+      regression_linetype1 = input$regression_linetype1,
+      regression_linetype2 = input$regression_linetype2,
+      # regression_linetype_multiple = input$regression_linetype_multiple,
       regression_se = input$regression_se,
       point_size = input$point_size,
       point_color = input$point_color,
@@ -414,7 +417,12 @@ shinyServer(function(input, output, session) {
     }
     
     # Adding a regression line
-    if(input$regression_boolean){ plot <- plot + geom_smooth(method = input$regression_method, se = input$regression_se, color = input$regression_color, fill = input$regression_color) }
+    if(input$regression_boolean){ plot <- plot + geom_smooth(method = input$regression_method,
+                                                             se = input$regression_se, 
+                                                             color = input$regression_color, 
+                                                             fill = input$regression_color,
+                                                             linetype = input$regression_linetype) +
+      scale_linetype_manual(values = rep(input$regression_linetype, 2)) }
     
     # Adding general plots
     plot <- set_plot_elements(plot)
@@ -432,21 +440,45 @@ shinyServer(function(input, output, session) {
     
     # Color-based condition
     if (input$multiple_color == "Color") {
+      color_values <- c(input$point_color1, input$point_color2)
+      
       if (input$point_outline_boolean) {
         plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
           geom_point(aes(fill = type), 
                      shape = 21, 
                      size = input$point_size,
-                     color = input$point_outline_color,
-                     stroke = input$point_stroke) +
-          scale_fill_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title)
+                     color = input$point_outline_color) +
+          scale_fill_manual(values = color_values, name = input$legend_title)
       } else {
         plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
           geom_point(aes(color = type), 
                      size = input$point_size) +
-          scale_color_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title)
+          scale_color_manual(values = color_values, name = input$legend_title)
       }
+      
+      # Add regression line matching group color
+      if (input$regression_boolean) {
+        plot <- plot +
+          geom_smooth(aes(group = type, linetype = type, color = type),
+                      method = input$regression_method,
+                      se = input$regression_se) +
+          scale_color_manual(
+            values = c(input$point_color1, input$point_color2),
+            name = input$legend_title
+          ) +
+          scale_linetype_manual(
+            values = setNames(
+              c(input$regression_linetype1, input$regression_linetype2),
+              levels(combined_data$type)
+            ),
+            name = input$legend_title
+          ) +
+          guides(fill = "none")  # hide unused fill guide
+        
+      }
+      
     }
+    
     
     # Shape-based condition
     if (input$multiple_color == "Shapes") {
@@ -475,12 +507,25 @@ shinyServer(function(input, output, session) {
     }
     
     if (input$regression_boolean) {
-      plot <- plot + geom_smooth(method = input$regression_method, 
-                                 se = input$regression_se, 
-                                 show.legend = FALSE,
-                                 color = input$regression_color_multiple,
-                                 fill = input$regression_color_multiple)
+      plot <- plot +
+        geom_smooth(aes(group = type, linetype = type, color = type),
+                    method = input$regression_method,
+                    se = input$regression_se) +
+        scale_color_manual(
+          values = c(input$point_color1, input$point_color2),
+          name = input$legend_title
+        ) +
+        scale_linetype_manual(
+          values = setNames(
+            c(input$regression_linetype1, input$regression_linetype2),
+            levels(combined_data$type)
+          ),
+          name = input$legend_title
+        ) +
+        guides(fill = "none")  # hide unused fill guide
+      
     }
+    
     
     plot <- set_plot_elements(plot)
     return(plot)
