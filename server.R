@@ -31,58 +31,62 @@ shinyServer(function(input, output, session) {
   
   
   # Saving App Settings Reactive function
-  app_settings <- reactive({
-    list(
-      skip = input$skip,
-      sheet = input$sheet,
-      plotType = input$plotType,
-      x_column = input$x_column,
-      y_column = input$y_column,
-      x_column2 = input$x_column2,
-      multiple_color = input$multiple_color,
-      shapes1 = input$shapes1,
-      shapes2 = input$shapes2,
-      color_boolean = input$color_boolean,
-      color_data = input$color_data,
-      regression_boolean = input$regression_boolean,
-      regression_method = input$regression_method,
-      regression_linetype1 = input$regression_linetype1,
-      regression_linetype2 = input$regression_linetype2,
-      # regression_linetype_multiple = input$regression_linetype_multiple,
-      regression_se = input$regression_se,
-      point_size = input$point_size,
-      point_color = input$point_color,
-      point_color1 = input$point_color1,
-      point_color2 = input$point_color2,
-      data_color1 = input$data_color1,
-      data_color2 = input$data_color2,
-      regression_color = input$regression_color,
-      regression_color_multiple = input$regression_color_multiple,
-      y_axis_min = input$y_axis_min,
-      y_axis_max = input$y_axis_max,
-      x_axis_min = input$x_axis_min,
-      x_axis_max = input$x_axis_max,
-      gridlines = input$gridlines,
-      minor_gridlines = input$minor_gridlines,
-      outline_boolean = input$outline_boolean,
-      legend_position = input$legend_position,
-      legend_background = input$legend_background,
-      axes_size = input$axes_size,
-      num_size = input$num_size,
-      Font = input$Font,
-      plot_title = input$plot_title,
-      y_title = input$y_title,
-      x_title = input$x_title,
-      legend_title = input$legend_title,
-      multiple_condition_title1 = input$multiple_condition_title1,
-      multiple_condition_title2 = input$multiple_condition_title2,
-      boxplot_individual_points_bool = input$boxplot_individual_points_bool,
-      boxplot_mean_bool = input$boxplot_mean_bool,
-      seed = input$seed,
-      plot_width = input$plot_width,
-      plot_height = input$plot_height
-    )
-  })
+  # app_settings <- reactive({
+  #   list(
+  #     skip = input$skip,
+  #     sheet = input$sheet,
+  #     plotType = input$plotType,
+  #     x_column = input$x_column,
+  #     y_column = input$y_column,
+  #     x_column2 = input$x_column2,
+  #     multiple_color = input$multiple_color,
+  #     shapes1 = input$shapes1,
+  #     shapes2 = input$shapes2,
+  #     color_boolean = input$color_boolean,
+  #     color_data = input$color_data,
+  #     regression_boolean = input$regression_boolean,
+  #     regression_method = input$regression_method,
+  #     regression_linetype1 = input$regression_linetype1,
+  #     regression_linetype2 = input$regression_linetype2,
+  #     # regression_linetype_multiple = input$regression_linetype_multiple,
+  #     regression_se = input$regression_se,
+  #     point_size = input$point_size,
+  #     point_color = input$point_color,
+  #     point_color1 = input$point_color1,
+  #     point_color2 = input$point_color2,
+  #     data_color1 = input$data_color1,
+  #     point_outline_boolean = input$point_outline_boolean,
+  #     point_outline_color = input$point_outline_color,
+  #     point_outline_size = input$point_stroke,
+  #     outline_color = input$outline_color,
+  #     data_color2 = input$data_color2,
+  #     regression_color = input$regression_color,
+  #     regression_color_multiple = input$regression_color_multiple,
+  #     y_axis_min = input$y_axis_min,
+  #     y_axis_max = input$y_axis_max,
+  #     x_axis_min = input$x_axis_min,
+  #     x_axis_max = input$x_axis_max,
+  #     gridlines = input$gridlines,
+  #     minor_gridlines = input$minor_gridlines,
+  #     outline_boolean = input$outline_boolean,
+  #     legend_position = input$legend_position,
+  #     legend_background = input$legend_background,
+  #     axes_size = input$axes_size,
+  #     num_size = input$num_size,
+  #     Font = input$Font,
+  #     plot_title = input$plot_title,
+  #     y_title = input$y_title,
+  #     x_title = input$x_title,
+  #     legend_title = input$legend_title,
+  #     multiple_condition_title1 = input$multiple_condition_title1,
+  #     multiple_condition_title2 = input$multiple_condition_title2,
+  #     boxplot_individual_points_bool = input$boxplot_individual_points_bool,
+  #     boxplot_mean_bool = input$boxplot_mean_bool,
+  #     seed = input$seed,
+  #     plot_width = input$plot_width,
+  #     plot_height = input$plot_height
+  #   )
+  # })
   
   
   # We want a reactive expression here in order to return the data from the spreadsheet
@@ -438,6 +442,11 @@ shinyServer(function(input, output, session) {
   generateMultipleScatterplot <- function(data_filtered, input) {
     combined_data <- long_form()
     
+    if (nrow(combined_data) == 0 || all(is.na(combined_data$x_data))) {
+      return(ggplot() + theme_void() + ggtitle("No data to display. Check your selected columns."))
+    }
+    
+    
     # Color-based condition
     if (input$multiple_color == "Color") {
       color_values <- c(input$point_color1, input$point_color2)
@@ -635,79 +644,94 @@ shinyServer(function(input, output, session) {
   
   
   # Saving settings
-  output$save_settings <- downloadHandler(
-    filename = function() {
-      paste0("graph_settings_", Sys.Date(), ".rds")
-    },
-    content = function(file) {
-      saveRDS(app_settings(), file)
-    }
-  )
+  # output$save_settings <- downloadHandler(
+  #   filename = function() {
+  #     paste0("graph_settings_", Sys.Date(), ".rds")
+  #   },
+  #   content = function(file) {
+  #     saveRDS(app_settings(), file)
+  #   }
+  # )
   
   
   # Upload and apply settings
-  observeEvent(input$load_settings, {
-    req(input$load_settings)
-    # req(input$file1)
-    saved <- readRDS(input$load_settings$datapath)
-    
-    # Map of input names to update functions
-    update_map <- list(
-      skip = updateNumericInput,
-      sheet = updateSelectInput,
-      plotType = updateSelectInput,
-      x_column = updateSelectInput,
-      y_column = updateSelectInput,
-      x_column2 = updateSelectInput,
-      multiple_color = updateSelectInput,
-      shapes1 = updateSelectInput,
-      shapes2 = updateSelectInput,
-      color_boolean = updateCheckboxInput,
-      color_data = updateSelectInput,
-      regression_boolean = updateCheckboxInput,
-      regression_method = updateSelectInput,
-      regression_se = updateCheckboxInput,
-      point_size = updateSliderInput,
-      point_color = updateColourInput,
-      point_color1 = updateColourInput,
-      point_color2 = updateColourInput,
-      data_color1 = updateColourInput,
-      data_color2 = updateColourInput,
-      regression_color = updateColourInput,
-      regression_color_multiple = updateColourInput,
-      y_axis_min = updateNumericInput,
-      y_axis_max = updateNumericInput,
-      x_axis_min = updateNumericInput,
-      x_axis_max = updateNumericInput,
-      gridlines = updateCheckboxInput,
-      minor_gridlines = updateCheckboxInput,
-      outline_boolean = updateCheckboxInput,
-      legend_position = updateSelectInput,
-      legend_background = updateColourInput,
-      axes_size = updateSliderInput,
-      num_size = updateSliderInput,
-      Font = updateSelectInput,
-      plot_title = updateTextInput,
-      y_title = updateTextInput,
-      x_title = updateTextInput,
-      legend_title = updateTextInput,
-      multiple_condition_title1 = updateTextInput,
-      multiple_condition_title2 = updateTextInput,
-      boxplot_individual_points_bool = updateCheckboxInput,
-      boxplot_mean_bool = updateCheckboxInput,
-      seed = updateNumericInput,
-      plot_width = updateNumericInput,
-      plot_height = updateNumericInput
-    )
-    
-    for (name in names(saved)) {
-      if (!is.null(saved[[name]]) && !is.null(update_map[[name]])) {
-        try({
-          update_map[[name]](session, name, value = saved[[name]])
-        }, silent = TRUE)
-      }
-    }
-  })
+#   observeEvent(input$load_settings, {
+#     req(input$load_settings)
+#     # req(input$file1)
+#     saved <- readRDS(input$load_settings$datapath)
+#     
+#     # Map of input names to update functions
+#     update_map <- list(
+#       plotType = updateSelectInput,
+#       skip = updateNumericInput,
+#       sheet = updateSelectInput,
+#       x_column = updateSelectInput,
+#       y_column = updateSelectInput,
+#       x_column2 = updateSelectInput,
+#       multiple_color = updateSelectInput,
+#       shapes1 = updateSelectInput,
+#       shapes2 = updateSelectInput,
+#       color_boolean = updateCheckboxInput,
+#       color_data = updateSelectInput,
+#       regression_boolean = updateCheckboxInput,
+#       regression_method = updateSelectInput,
+#       regression_se = updateCheckboxInput,
+#       point_size = updateSliderInput,
+#       point_color = updateColourInput,
+#       point_color1 = updateColourInput,
+#       point_color2 = updateColourInput,
+#       data_color1 = updateColourInput,
+#       data_color2 = updateColourInput,
+#       point_outline_boolean = updateCheckboxInput,
+#       point_outline_color = updateColourInput,
+#       point_outline_size = updateSliderInput,
+#       outline_color = updateColourInput,
+#       regression_color = updateColourInput,
+#       regression_color_multiple = updateColourInput,
+#       y_axis_min = updateNumericInput,
+#       y_axis_max = updateNumericInput,
+#       x_axis_min = updateNumericInput,
+#       x_axis_max = updateNumericInput,
+#       gridlines = updateCheckboxInput,
+#       minor_gridlines = updateCheckboxInput,
+#       outline_boolean = updateCheckboxInput,
+#       legend_position = updateSelectInput,
+#       legend_background = updateColourInput,
+#       axes_size = updateSliderInput,
+#       num_size = updateSliderInput,
+#       Font = updateSelectInput,
+#       plot_title = updateTextInput,
+#       y_title = updateTextInput,
+#       x_title = updateTextInput,
+#       legend_title = updateTextInput,
+#       multiple_condition_title1 = updateTextInput,
+#       multiple_condition_title2 = updateTextInput,
+#       boxplot_individual_points_bool = updateCheckboxInput,
+#       boxplot_mean_bool = updateCheckboxInput,
+#       seed = updateNumericInput,
+#       plot_width = updateNumericInput,
+#       plot_height = updateNumericInput
+#     )
+#     
+#     # First update plotType by itself
+#   if (!is.null(saved$plotType)) {
+#     updateSelectInput(session, "plotType", selected = saved$plotType)
+#   }
+# 
+#   # Then delay other input updates briefly so that UI can catch up
+#   isolate({
+#     lapply(setdiff(names(saved), "plotType"), function(name) {
+#       if (!is.null(saved[[name]]) && !is.null(update_map[[name]])) {
+#         try({
+#           update_map[[name]](session, name, value = saved[[name]])
+#         }, silent = TRUE)
+#       }
+#     })
+#   })
+#   
+#   data1$data <- process_data(skip = input$skip, sheet = input$sheet)
+#   update_ui_components()
+# })
   
   
   
