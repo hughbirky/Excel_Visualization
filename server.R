@@ -375,7 +375,7 @@ shinyServer(function(input, output, session) {
           geom_point(size = input$point_size, 
                      fill = input$point_color, 
                      color = input$point_outline_color,
-                     # stroke = input$point_stroke,
+                     stroke = input$point_stroke,
                      shape = 21)
       }else {
         plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
@@ -397,7 +397,7 @@ shinyServer(function(input, output, session) {
           geom_point(aes_string(fill = input$color_data), 
                      color = input$point_outline_color,
                      shape = 21, 
-                     # stroke = input$point_stroke,
+                     stroke = input$point_stroke,
                      size = input$point_size) +
           scale_fill_continuous(low = input$data_color1, high = input$data_color2)
       } else {
@@ -437,7 +437,8 @@ shinyServer(function(input, output, session) {
           geom_point(aes(fill = type), 
                      shape = 21, 
                      size = input$point_size,
-                     color = input$point_outline_color) +
+                     color = input$point_outline_color,
+                     stroke = input$point_stroke) +
           scale_fill_manual(values = c(input$point_color1, input$point_color2), name = input$legend_title)
       } else {
         plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +

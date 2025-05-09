@@ -157,6 +157,13 @@ shinyUI(fluidPage(
                  checkboxInput("outline_boolean", "Show Plot Outline", value = T),
                  checkboxInput("point_outline_boolean", "Show Point Outline", value = F),
                  
+                 # Adjusting size of outline
+                 conditionalPanel(
+                   condition = "input.point_outline_boolean",
+                   sliderInput("point_stroke", "Outline Size", value = .5, min = 0.01, max = 5)
+                 ),
+                 
+                 
                  selectInput("legend_position", label = "Legend Position",
                              choices = list("normal","none","top","bottom"), selected = "normal"),
                  
