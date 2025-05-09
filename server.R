@@ -456,7 +456,8 @@ shinyServer(function(input, output, session) {
           geom_point(aes(fill = type), 
                      shape = 21, 
                      size = input$point_size,
-                     color = input$point_outline_color) +
+                     color = input$point_outline_color,
+                     stroke = input$point_stroke) +
           scale_fill_manual(values = color_values, name = input$legend_title)
       } else {
         plot <- ggplot(combined_data, aes(x = x_data, y = y_data)) +
