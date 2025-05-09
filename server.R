@@ -370,8 +370,18 @@ shinyServer(function(input, output, session) {
       
       # Changing column names
       # Plotting when no color included
-      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
-        geom_point(size = input$point_size, color = input$point_color)
+      if(input$point_outline_boolean){
+        plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
+          geom_point(size = input$point_size, 
+                     fill = input$point_color, 
+                     color = input$point_outline_color,
+                     # stroke = input$point_stroke,
+                     shape = 21)
+      }else {
+        plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column)) +
+          geom_point(size = input$point_size, color = input$point_color)
+      }
+      
         
         
     } else {
@@ -381,10 +391,21 @@ shinyServer(function(input, output, session) {
         select(input$x_column,input$y_column,input$color_data)
       # Getting rid of NA values
       data_filtered <-na.omit(data_filtered)
-      # Plotting for color included
-      plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
-        geom_point(size = input$point_size) +
-        scale_color_continuous(low = input$data_color1, high = input$data_color2)
+      # Plotting for color included'
+      if(input$point_outline_boolean){
+        plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
+          geom_point(aes_string(fill = input$color_data), 
+                     color = input$point_outline_color,
+                     shape = 21, 
+                     # stroke = input$point_stroke,
+                     size = input$point_size) +
+          scale_fill_continuous(low = input$data_color1, high = input$data_color2)
+      } else {
+        plot <- ggplot(data_filtered, aes_string(x = input$x_column, y = input$y_column, color = input$color_data))+
+          geom_point(size = input$point_size) +
+          scale_color_continuous(low = input$data_color1, high = input$data_color2)
+      }
+      
       
       # Adjusting the position of the legend
       if(input$legend_position != "normal"){
