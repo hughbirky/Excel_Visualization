@@ -155,6 +155,7 @@ shinyUI(fluidPage(
                  checkboxInput("gridlines", "Show Major Gridlines", value = F),
                  checkboxInput("minor_gridlines", "Show Minor Gridlines", value = F),
                  checkboxInput("outline_boolean", "Show Plot Outline", value = T),
+                 checkboxInput("point_outline_boolean", "Show Point Outline", value = F),
                  
                  selectInput("legend_position", label = "Legend Position",
                              choices = list("normal","none","top","bottom"), selected = "normal"),
@@ -247,6 +248,13 @@ shinyUI(fluidPage(
                      
                    ),
                    
+                   # Conditional panel for showing the color option for the regression line
+                   conditionalPanel(
+                     condition = "input.point_outline_boolean",
+                     colourInput("point_outline_color", "Point Outline Color", value = "black")
+                     
+                     
+                   ),
                    # Conditional panel for showing the color option for the regression line
                    conditionalPanel(
                      condition = "input.regression_boolean && input.plotType != 'Scatterplot'",

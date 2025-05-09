@@ -201,7 +201,7 @@ shinyServer(function(input, output, session) {
     # If there is no input in the text box, make the title the name of the column
     if(input$legend_title == ""){
       legend = as.character(input$color_data)
-    } else { legend = input$legend_title }
+    } else { legend = as.character(input$legend_title) }
     
     print(paste0(con1, " - ", con2))
     
@@ -296,8 +296,8 @@ shinyServer(function(input, output, session) {
   })
   
   # Checking to see if any of the values have changed
-  toListenX <- reactive({ list(input$x_column,input$x_column2) })
-  toListenY <- reactive({ list(input$y_column) })
+  toListenX <- reactive({ list(input$x_column,input$x_column2,input$sheet) })
+  toListenY <- reactive({ list(input$y_column,input$sheet) })
   
   # Update ranges every time these change for the x axis
   observeEvent(toListenX(), {
@@ -427,7 +427,7 @@ shinyServer(function(input, output, session) {
       # Making actual plot
       plot <- ggplot(combined_data, aes(x = x_data, y = y_data, lty = type)) +
         geom_point(size = input$point_size, aes(shape = type)) +
-        scale_shape_manual(values = c(shape_index1,shape_index2))
+        scale_shape_manual(values = c(shape_index1,shape_index2), name = input$legend_title)
     }
     
     # Baseline plot for all the stuff needed for all conditions COLOR ONLY
